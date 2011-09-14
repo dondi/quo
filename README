@@ -1,3 +1,35 @@
 On the surface, Quo is a customizable — some would say programmable — social
 network status demultiplexer.  What it really is, underneath, is a string
 processing pipeline.  But not everyone has to know that.
+
+The doc directory holds assorted design and specification files.
+
+=========
+Use Cases
+=========
+
+- Create user
+- Modify user (including password)
+- Post status update
+- Add status function call to pipeline
+- Set status function call arguments
+- Set previous/next functions of a status function call
+- Save/persist pipeline
+- Create status function
+- Modify status function
+- List available status functions
+
+=============
+Resource URIs
+=============
+
+/users
+/users/{username}
+
+/pipelines
+/pipelines?user={username}
+/pipelines/{id}
+
+/functions
+/functions?q={search term}
+/functions/{id}
