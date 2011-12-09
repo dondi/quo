@@ -5,7 +5,7 @@
  * administrative functions of Quo.
  */
 
-module.exports = function (app) {
+module.exports = function (app, client) {
 	
   /*
    * GET /

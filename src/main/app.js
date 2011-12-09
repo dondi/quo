@@ -10,13 +10,11 @@ var express = require('express'),
 
     mysql = require('mysql');
     
-    /* TODO: Add database made on my.cs.lmu.edu
     client = mysql.createClient({
-      ACCOUNTS_TABLE : "",
+      ACCOUNTS_TABLE : "quo_accounts",
       host : "mysql.cs.lmu.edu",
-      database : ""
+      database : "quo"
     });
-    */
 
 /*
  *
@@ -65,18 +63,15 @@ app.configure('production', function () {
  *
  */
 
-/* TODO: This totally wasn't lifted from another project...
- *       Add the database credentials from environment vars
 // Check that the proper credentials have been set, otherwise, do not mess with database stuff
-if (process.env.KTAH_DB_USER && process.env.KTAH_DB_PASS) {
-  client.user = process.env.KTAH_DB_USER;
-  client.password = process.env.KTAH_DB_PASS;
+if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
+  client.user = process.env.QUO_DB_USER;
+  client.password = process.env.QUO_DB_PASS;
   require('./public/js/modules/db-config.js')(client);
 } else {
   console.error("Database user and/or password not found in environment.");
   console.error("No database will be available to this process.");
 }
-*/
 
 /*
  *
@@ -84,7 +79,7 @@ if (process.env.KTAH_DB_USER && process.env.KTAH_DB_PASS) {
  *
  */
 
-require('./controllers/account-controller.js')(app);
+require('./controllers/account-controller.js')(app, client);
 require('./controllers/pipeline-controller.js')(app);
 
 /*
