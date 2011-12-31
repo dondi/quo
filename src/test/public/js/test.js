@@ -1,41 +1,32 @@
 /*
  * To-do:
- * - Link up with jsOAuth lib
- * - Get information required for authorization
- * - Make it functional
+ * - Acquire access_token and access_token_secret via redirect to Twitter
  * 
  */
 
-var test = function () {
-    var oauth = OAuth({
-    	// I need to acquire this information... and then hide it
-        consumerKey: "<consumer-key>",
-        consumerSecret: "<consumer-secret>"
-    }),
+var sys = require('sys'),
+	OAuth = require('./lib/oauth.js').OAuth,
+	consumer_key = "wouldn't you like to know?",
+	consumer_secret = "wouldn't you like to know?",
+	
+	oa = new OAuth("https://twitter.com/oauth/request_token",
+    	"https://twitter.com/oauth/access_token",
+    	consumer_key, consumer_secret,
+    	"1.0A", "http://localhost:4000/oauth/callback", "HMAC-SHA1"),
     
-    success = function (data) {
-    	var timeline = JSON.parse(data.text);
-    	timeline.foreach(function (element) {
-    		alert(element.text);
-    	});
-    },
-    
-    failure = function (data) {
-    	alert("Error")
-    },
-    
-    connect = function () {
-    	// Simple example of retrieving recent Tweets
-    	oauth.get("http://api.twitter.com/1/statuses/home_timeline.json", success, failure);
-    	
-    	// encodeURI()
-    	oauth.post("https://api.twitter.com/oauth/request_token"/*,*/ /* URI encoded callback location */);
-    };
-};
+	access_token = "acquired on-the-fly",
+	access_token_secret = "acquired on-the-fly";
+
+oa.get("https://api.twitter.com/1/statuses/home_timeline.json", access_token, access_token_secret, 
+    function(error, data) {
+        console.log(sys.inspect(data));
+    });
 
 /* Links:
  * https://dev.twitter.com/docs
  *     Implementing Sign in with Twitter
  * 
- * bytespider.github.com/jsOAuth/api-reference
+ * https://github.com/ciaranj/node-oauth
+ * http://stackoverflow.com/questions/5428745/problems-with-oauth-on-node-js
+ * 
  */
