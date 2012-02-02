@@ -5,8 +5,10 @@
  */
 
 var express = require('express'),
+    
+    everyauth = require('everyauth'),
 
-    app = module.exports = express.createServer(),
+    app = module.exports = express.createServer(everyauth.middleware()),
 
     mysql = require('mysql');
     
@@ -39,7 +41,7 @@ app.configure(function () {
   app.use(express.methodOverride());
   app.use(express.cookieParser());
   app.use(express.session({
-    secret: 'your secret here'
+    secret: 'badonka donk'
   }));
   // TODO I don't know much about sessions and what this secret is, but we need to pick one!
   app.use(app.router);
