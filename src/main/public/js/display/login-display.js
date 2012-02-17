@@ -8,4 +8,9 @@
 $(function () {
   // Set the focus on the login input
   $("#user").focus();
+  
+  $("#twitter-test")
+    .click(function () {
+      window.location = "/auth/twitter";
+    });
 });

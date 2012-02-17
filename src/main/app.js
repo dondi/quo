@@ -7,11 +7,31 @@
 var express = require('express'),
     
     everyauth = require('everyauth'),
-
-    app = module.exports = express.createServer(everyauth.middleware()),
-
-    mysql = require('mysql');
     
+    mysql = require('mysql');
+
+// Everyauth configs
+everyauth
+  .twitter
+    .consumerKey(process.env.QUO_TWIT_KEY)
+    .consumerSecret(process.env.QUO_TWIT_SECRET)
+    .findOrCreateUser( function (sess, accessToken, accessSecret, twitUser) {
+      return usersByTwitId[twitUser.id] || 
+        (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));
+    })
+    .redirectPath('/');
+
+var app = module.exports = express.createServer(
+      express.bodyParser(),
+      express.static(__dirname + '/public'),
+      express.cookieParser(),
+      express.methodOverride(),
+      express.session({
+        secret: 'badonka donk'
+      }),
+      everyauth.middleware()
+    );
+
     client = mysql.createClient({
       ACCOUNTS_TABLE : "quo_accounts",
       host : "mysql.cs.lmu.edu",
@@ -37,15 +57,6 @@ app.configure(function () {
       };
     }
   });
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser());
-  app.use(express.session({
-    secret: 'badonka donk'
-  }));
-  // TODO I don't know much about sessions and what this secret is, but we need to pick one!
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function () {

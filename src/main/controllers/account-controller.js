@@ -12,10 +12,9 @@ module.exports = function (app, client) {
    *   Renders the login index
    */
   app.get('/', function (req, res) {
-    /*res.render('index', {
+    res.render('index', {
       layout: true
-    });*/
-   res.redirect('/auth/twitter');
+    });
   });
   
   
