@@ -8,18 +8,51 @@ var express = require('express'),
     
     everyauth = require('everyauth'),
     
-    mysql = require('mysql');
+    mysql = require('mysql'),
+    
+    client = mysql.createClient({
+      ACCOUNTS_TABLE : "quo_accounts",
+      host : "mysql.cs.lmu.edu",
+      database : "quo"
+    }),
+    
+    errors = "";
+    
+    
+/*
+ *
+ *  **** CONFIGURATION ****
+ *
+ */
+
+// Check that the proper credentials have been set, otherwise, do not mess with database stuff
+if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
+  client.user = process.env.QUO_DB_USER;
+  client.password = process.env.QUO_DB_PASS;
+  require('./public/js/modules/db-config.js')(client);
+} else {
+  errors += "\n[X] Database user and/or password not found in environment.\n" +
+            "[X] No database will be available to this process.";
+}
 
 // Everyauth configs
-everyauth
-  .twitter
-    .consumerKey(process.env.QUO_TWIT_KEY)
-    .consumerSecret(process.env.QUO_TWIT_SECRET)
-    .findOrCreateUser( function (sess, accessToken, accessSecret, twitUser) {
-      return usersByTwitId[twitUser.id] || 
-        (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));
-    })
-    .redirectPath('/');
+if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
+  everyauth
+    .twitter
+      .consumerKey(process.env.QUO_TWIT_KEY)
+      .consumerSecret(process.env.QUO_TWIT_SECRET)
+      .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+        return usersByTwitId[twitUser.id] || 
+          (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));
+      })
+      .redirectPath('/');
+} else {
+  errors += "\n[X] Twitter consumer credentials not found in environment.\n" +
+            "[X] There will be no Twitter connectivity in the process."
+}
+    
+// Report any configuration errors
+console.error(errors || "\n[!] Configuration successful.");
 
 var app = module.exports = express.createServer(
       express.bodyParser(),
@@ -32,15 +65,10 @@ var app = module.exports = express.createServer(
       everyauth.middleware()
     );
 
-    client = mysql.createClient({
-      ACCOUNTS_TABLE : "quo_accounts",
-      host : "mysql.cs.lmu.edu",
-      database : "quo"
-    });
 
 /*
  *
- *  **** APPLICATION CONFIGURATION ****
+ *  **** APPLICATION DEFINITION ****
  *
  */
 
@@ -70,21 +98,6 @@ app.configure('production', function () {
   app.use(express.errorHandler());
 });
 
-/*
- *
- *  **** DATABASE CONFIGURATION ****
- *
- */
-
-// Check that the proper credentials have been set, otherwise, do not mess with database stuff
-if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
-  client.user = process.env.QUO_DB_USER;
-  client.password = process.env.QUO_DB_PASS;
-  require('./public/js/modules/db-config.js')(client);
-} else {
-  console.error("Database user and/or password not found in environment.");
-  console.error("No database will be available to this process.");
-}
 
 /*
  *
@@ -97,7 +110,7 @@ require('./controllers/pipeline-controller.js')(app);
 
 /*
  *
- *  **** START THE SERVER ****
+ *  **** SERVER START ****
  *
  */
 

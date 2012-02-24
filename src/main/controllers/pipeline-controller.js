@@ -70,4 +70,13 @@ module.exports = function (app) {
     });
   });
   
+  
+  /*
+   * POST /tweet/:message
+   *   [TODO]
+   */
+  app.post('/tweet', function (req, res) {
+    res.send('You said: ' + req.params.message);
+  });
+  
 }
