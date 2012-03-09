@@ -1,42 +1,62 @@
-/* TODO: Do we want to use a CSS reset to deal with stupid 
-   cross browser differences? */
+body {
+    position: relative;
+    background-color: #FFFFFE;
+    font-family: "Copperplate", sans-serif;
+}
+
+h1 {
+    font-size: 205%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+button {
+
+}
+
+textarea {
+    width: 400px;
+    height: 100px;
+}
+
+.panel {
+    position: relative;
+    opacity: 80%;
+    color: black;
+    border: 1px;
+    border-style: solid;
+    border-top-left-radius: 10px 10px;
+    border-top-right-radius: 10px 10px;
+    border-bottom-left-radius: 10px 10px;
+    border-bottom-right-radius: 10px 10px;
+    text-align: center;
+    font-weight: 100;
+    font-size: 105%;
+    box-shadow: 0px 7px 25px #000000;
+    -moz-box-shadow: 0px 7px 25px #000000;
+    -webkit-box-shadow: 0px 7px 25px #000000;
+    background-color: #EEF3E2;
+    border-color: #EEF3E2;
+}
+
+#login {
+	height 500px;
+	width: 500px;
+	margin-top: 200px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 #main {
-  width: 800px;
-  margin: 150px auto 0 auto;
-  border: 1px solid black;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  overflow: auto;
+    height: 500px;
+    width: 700px;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.loginFrame {
-  width: 400px;
-  padding: 20px;
-  margin: 150px auto 0 auto;
-  border: 1px solid black;
-  -moz-border-radius: 10px;
-  border-radius: 10px;
-  text-align: center;
+#checkboxes {
+    width: 40px;
+    height: 40px;
 }
 
-.topMargin {
-  margin-top: 10px;
-}
-
-#flashMessage {
-  color: white;
-  margin: 10px;
-  border: 1px solid black;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;
-  border-radius: 5px;
-}
-
-.goodMessage {
-  background-color: green;
-}
-
-.badMessage {
-  background-color: red;
-}

@@ -5,9 +5,12 @@
  * main screen.
  */
 
-$(function () {
-  $("#twitter-button")
-    .click(function () {
-      window.location = "../auth/twitter";
-    });
+$(function() {
+    $("#status").bind('input',function() {
+        $("#character-count").text( $("#status").val().length );
+        if ( ($("#status").val().length) >= 144 ) {
+            $("#twitter-check").attr("disabled", "disabled");
+        } else {
+            $("#twitter-check").removeAttr("disabled");
+        }    });
 });

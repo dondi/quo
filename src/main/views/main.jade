@@ -1,6 +1,16 @@
-#main
-  h1 Main Screen
-  p Hard-login as quodev
-  p
-    button#twitter-button Twitter
-script(type="text/javascript", src="../js/display/main-display.js")
+#main.panel
+  h1 Welcome to Quo
+  h3 Submit to Quo's Will and Post
+  div Character Count: 
+    span#character-count 0
+  #posting-section
+    textarea#status
+  div
+    input#twitter-check(type="checkbox")
+    label(for="twitter-check") Twitter
+    input#facebook-check(type="checkbox")
+    label(for="facebook-check") Facebook
+  button#post-this Post this
+  #info-section
+
+script(src='../js/display/main-display.js')
