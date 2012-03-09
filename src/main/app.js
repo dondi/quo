@@ -42,8 +42,10 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .consumerKey(process.env.QUO_TWIT_KEY)
       .consumerSecret(process.env.QUO_TWIT_SECRET)
       .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-        return usersByTwitId[twitUser.id] || 
-          (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));
+        /*return usersByTwitId[twitUser.id] || 
+          (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));*/
+        console.log(JSON.stringify(twitUser));
+        return twitUser;
       })
       .redirectPath('/');
 } else {
