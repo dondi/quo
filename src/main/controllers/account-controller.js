@@ -6,7 +6,7 @@
  */
 
 module.exports = function (app, client) {
-	var everyauth = require("everyauth");
+	//var everyauth = require("everyauth");
   /*
    * GET /
    *   Renders the login index
