@@ -79,14 +79,13 @@ module.exports = function (app, everyauth) {
    *   [TODO]
    */
   app.get('/tweet/:message', function (req, res) {
-    /*console.log(req);
-    return;*/
     
     /*
      * https://dev.twitter.com/docs/api
      * https://dev.twitter.com/docs/api/1/post/statuses/update
      * https://dev.twitter.com/docs/auth/authorizing-request
      * https://dev.twitter.com/docs/auth/creating-signature
+     * https://dev.twitter.com/discussions/305
      * 
      * Example OAuth request can be generated on dev.twitter.com
      */
@@ -161,7 +160,6 @@ module.exports = function (app, everyauth) {
           // Creating the Signature Base String
           var signatureBaseString = "POST&" + encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
             "&" + encodeURIComponent(parameterString);
-          console.log(signatureBaseString);
           
           // Creating the Signing Key
           var signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
