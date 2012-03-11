@@ -6,7 +6,7 @@
  */
 
 $(function() {
-    $("#status").bind('input',function() {
+    $("#status").bind('input', function() {
         $("#character-count").text( $("#status").val().length );
         if ( ($("#status").val().length) >= 144 ) {
             $("#twitter-check").attr("disabled", "disabled");
