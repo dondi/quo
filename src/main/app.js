@@ -44,7 +44,10 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
         // TODO: Search the database and return user if found; otherwise create it
         // twitUser needs to be made available to account-controller.js
+        // This is a temporary fix until the database is up and available
         everyauth.user = twitUser;
+        everyauth.user.accessToken = accessToken;
+        everyauth.user.accessSecret = accessSecret;
         return twitUser;
       })
       .redirectPath('/main');
