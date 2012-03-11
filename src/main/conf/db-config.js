@@ -15,5 +15,12 @@ module.exports = function (client) {
     + 'PRIMARY KEY (accountId))'
   );
   
-  return client;
+  // Create the media table
+  client.query(
+    'CREATE TABLE IF NOT EXISTS ' + client.MEDIA_TABLE
+    + '(accountId INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, '
+    + 'twit_user TEXT NOT NULL, '
+    + 'PRIMARY KEY (accountId))'
+  );
+  
 }

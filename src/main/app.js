@@ -12,12 +12,12 @@ var express = require('express'),
     
     client = mysql.createClient({
       ACCOUNTS_TABLE : "quo_accounts",
+      MEDIA_TABLE : "quo_media",
       host : "mysql.cs.lmu.edu",
       database : "quo"
     }),
     
     errors = "";
-    
     
 /*
  *
@@ -29,7 +29,7 @@ var express = require('express'),
 if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
   client.user = process.env.QUO_DB_USER;
   client.password = process.env.QUO_DB_PASS;
-  require('./public/js/modules/db-config.js')(client);
+  require('./conf/db-config.js')(client);  
 } else {
   errors += "\n[X] Database user and/or password not found in environment.\n" +
             "[X] No database will be available to this process.";
@@ -42,11 +42,12 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .consumerKey(process.env.QUO_TWIT_KEY)
       .consumerSecret(process.env.QUO_TWIT_SECRET)
       .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+        // TODO: Search the database and return user if found; otherwise create it
         // twitUser needs to be made available to account-controller.js
         everyauth.user = twitUser;
         return twitUser;
       })
-      .redirectPath('/');
+      .redirectPath('/main');
 } else {
   errors += "\n[X] Twitter consumer credentials not found in environment.\n" +
             "[X] There will be no Twitter connectivity in the process."
