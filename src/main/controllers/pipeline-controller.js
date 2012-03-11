@@ -79,6 +79,9 @@ module.exports = function (app, everyauth) {
    *   [TODO]
    */
   app.get('/tweet/:message', function (req, res) {
+    /*console.log(req);
+    return;*/
+    
     /*
      * https://dev.twitter.com/docs/api
      * https://dev.twitter.com/docs/api/1/post/statuses/update
@@ -156,8 +159,9 @@ module.exports = function (app, everyauth) {
             parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]]);
             
           // Creating the Signature Base String
-          var signatureBaseString = "POST&" + encodeURIComponent("api.twitter.com/1/statuses/update.json") + 
+          var signatureBaseString = "POST&" + encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
             "&" + encodeURIComponent(parameterString);
+          console.log(signatureBaseString);
           
           // Creating the Signing Key
           var signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
@@ -168,7 +172,6 @@ module.exports = function (app, everyauth) {
             hash = hmac.update(signatureBaseString),
             digest = hmac.digest("base64");
           
-          console.log(encodeURIComponent(digest));
           return digest;
       }(),
     
@@ -201,9 +204,8 @@ module.exports = function (app, everyauth) {
             console.log('Response: ' + chunk);
           });
         });
-    
     // Send request
-    post_req.write(encodedPost);
+    post_req.write("status=" + encodedPost);
     post_req.end();
   });
   

@@ -14,7 +14,6 @@ module.exports = function (app, client, everyauth) {
     res.render('index', {
       layout: true
     });
-    console.log(" From /: " + JSON.stringify(everyauth.user));
   });
   
   
