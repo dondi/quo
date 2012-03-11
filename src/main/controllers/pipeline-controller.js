@@ -6,7 +6,8 @@
  */
 
 module.exports = function (app) {
-  var https = require('https');
+  var https = require('https'),
+    sechash = require('sechash');
   
   /*
    * GET /pipelines
@@ -78,24 +79,30 @@ module.exports = function (app) {
    */
   app.post('/tweet/:message', function (req, res) {
     //res.send('You said: ' + req.params.message);
-    var authInfo = "";
-    var post_req = https.request({
-      host: 'api.twitter.com',
-      port: '443',
-      path: '/1/statuses/update.json',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Content-Length': 0, // Need an actual length here
-        'Authorization': authInfo
-      }
-    },
-    function (res) {
-      res.setEncoding('utf8');
-      res.on('data', function (chunk) {
-        console.log('Response: ' + chunk);
+    var authInfo = "OAuth oauth_consumer_key=\"" + process.env.QUO_TWIT_KEY + "\", " + 
+      "oauth_nonce=\"" + sechash.basicHash('md5', new Date().getTime()) + "\", " + 
+      "oauth_signature=\"" + "add oauth_signature here" + "\", " + 
+      "oauth_signature_method=\"HMAC-SHA1\", " + 
+      "oauth_timestamp=\"" + new Date().getTime() + "\", " + 
+      "",
+      
+      post_req = https.request({
+        host: 'api.twitter.com',
+        port: '443',
+        path: '/1/statuses/update.json',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Length': 0, // Need an actual length here
+          'Authorization': authInfo
+        }
+      },
+      function (res) {
+        res.setEncoding('utf8');
+        res.on('data', function (chunk) {
+          console.log('Response: ' + chunk);
+        });
       });
-    });
     
     post_req.write(tester);
     post_req.end();

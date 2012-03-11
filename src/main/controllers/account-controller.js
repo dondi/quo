@@ -5,8 +5,7 @@
  * administrative functions of Quo.
  */
 
-module.exports = function (app, client) {
-	//var everyauth = require("everyauth");
+module.exports = function (app, client, everyauth) {
   /*
    * GET /
    *   Renders the login index
@@ -15,6 +14,7 @@ module.exports = function (app, client) {
     res.render('index', {
       layout: true
     });
+    console.log(" From /: " + JSON.stringify(everyauth.user));
   });
   
   

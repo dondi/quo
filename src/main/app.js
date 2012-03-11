@@ -42,9 +42,8 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .consumerKey(process.env.QUO_TWIT_KEY)
       .consumerSecret(process.env.QUO_TWIT_SECRET)
       .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-        /*return usersByTwitId[twitUser.id] || 
-          (usersByTwitId[twitUser.id] = addUser('twitter', twitUser));*/
-        console.log(JSON.stringify(twitUser));
+        // twitUser needs to be made available to account-controller.js
+        everyauth.user = twitUser;
         return twitUser;
       })
       .redirectPath('/');
@@ -107,8 +106,8 @@ app.configure('production', function () {
  *
  */
 
-require('./controllers/account-controller.js')(app, client);
-require('./controllers/pipeline-controller.js')(app);
+require('./controllers/account-controller.js')(app, client, everyauth);
+require('./controllers/pipeline-controller.js')(app, everyauth);
 
 /*
  *
