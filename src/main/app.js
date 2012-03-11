@@ -12,7 +12,7 @@ var express = require('express'),
     
     client = mysql.createClient({
       ACCOUNTS_TABLE : "quo_accounts",
-      MEDIA_TABLE : "quo_media",
+      TWIT_TABLE : "quo_twit",
       host : "mysql.cs.lmu.edu",
       database : "quo"
     }),
@@ -29,7 +29,7 @@ var express = require('express'),
 if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
   client.user = process.env.QUO_DB_USER;
   client.password = process.env.QUO_DB_PASS;
-  require('./conf/db-config.js')(client);  
+  require('./conf/db-config.js')(client);
 } else {
   errors += "\n[X] Database user and/or password not found in environment.\n" +
             "[X] No database will be available to this process.";
