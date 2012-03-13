@@ -35,6 +35,14 @@ if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
             "[X] No database will be available to this process.";
 }
 
+// Test; creates quodev account, then tests its Id fetch and a media table creation
+client.createAccount("quodev", "quodev", "quodev@gmail.com", function (result) {console.log(result)});
+client.getAccountId("quodev", function (result) {
+  client.addMediaProfile(result, JSON.stringify({"test": "info"}), client.TWIT_TABLE, function (result) {
+    console.log("twitter add: " + result);
+  });
+});
+
 // Everyauth configs
 if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
   everyauth

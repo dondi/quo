@@ -15,41 +15,84 @@ module.exports = function (client) {
     + 'PRIMARY KEY (accountId))'
   );
   
-  // Create the media table
+  // Create the twitter accounts table
   client.query(
     'CREATE TABLE IF NOT EXISTS ' + client.TWIT_TABLE
-    + '(accountId INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, '
-    + 'twit_user TEXT NOT NULL, '
+    + '(accountId INT(11) UNSIGNED NOT NULL, '
+    + 'profile TEXT NOT NULL, '
     + 'PRIMARY KEY (accountId))'
   );
   
-  // Returns the account id, or -1 if it does not exist
-  client.getAccountId = function (account) {
+  // Asynchronously executes the callback with the account Id, if
+  // it exists, -1 otherwise 
+  client.getAccountId = function (account, callback) {
     client.query(
-      'SELECT accountName, id FROM ' + client.ACCOUNTS_TABLE + 
+      'SELECT accountName, accountId FROM ' + client.ACCOUNTS_TABLE + 
       ' WHERE accountName=?',
       [account],
       function (err, results, fields) {
-        return (results.length !== 0) ? results[0].id : -1;
+        var result = (results && results.length !== 0) ? results[0].accountId : -1;
+        callback(result);
       }
     );
   };
   
-  // Creates a main user account with given credentials
-  client.createAccount = function (user, pass, email) {
-    var alreadyExists = (client.getAccountId(user) !== -1);
-    if (alreadyExists) {
-      client.query(
-        "insert into " + client.ACCOUNTS_TABLE + " "
-         + "set accountName = ?, "
-         + "password = ?, "
-         + "email = ?",
-         [user, pass, email]
-      );
-    }
-    
-    // True if the add was successful; false if already exists
-    return alreadyExists;
+  // Creates a main user account with given credentials, triggering the callback
+  // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
+  client.createAccount = function (user, pass, email, callback) {
+    client.getAccountId(user, function (result) {
+      if (result === -1) {
+        client.query(
+          "insert into " + client.ACCOUNTS_TABLE + " "
+           + "set accountName = ?, "
+           + "password = ?, "
+           + "email = ?",
+           [user, pass, email],
+           function (err, results, fields) {
+             if (err) {
+               console.log(err);
+             }
+             callback(result);
+           }
+        );
+      }
+    });
+  };
+  
+  
+  // Asynchronously executes the callback with the media Id, if
+  // it exists, -1 otherwise
+  client.getMediaProfile = function (id, media, callback) {
+    client.query(
+      'SELECT accountId, profile FROM ' + media + ' ' // Weird bug; cannot name media table except inline
+       + 'WHERE accountId=?',
+      [id],
+      function (err, results, fields) {
+        var result = (results && results.length !== 0) ? results[0].accountId : -1;
+        callback(result);
+      }
+    );
+  };
+  
+  // Creates a main user account with given credentials, triggering the callback
+  // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
+  client.addMediaProfile = function (id, profile, media, callback) {
+    client.getMediaProfile(id, media, function (result) {
+      if (result === -1) {
+        client.query(
+          "insert into " + media + " " // Weird bug; cannot name media table except inline
+           + "set accountId = ?, "
+           + "profile = ?",
+           [id, profile],
+           function (err, results, fields) {
+             if (err) {
+               console.log(err);
+             }
+             callback(result);
+           }
+        );
+      }
+    });
   };
   
 }
