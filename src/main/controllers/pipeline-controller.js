@@ -95,7 +95,7 @@ module.exports = function (app, everyauth) {
     var timestamp = JSON.stringify(Math.floor(((new Date().getTime()) + (8*60*60))/1000)),
       nonce = sechash.basicHash('md5', timestamp),
       accessToken = everyauth.user.accessToken,
-      encodedPost = encodeURIComponent(req.params.message),
+      encodedPost = { "status" : encodeURIComponent(req.params.message) },
       signature = function () {
         /*
          * Creating the Parameter String:
@@ -105,7 +105,7 @@ module.exports = function (app, everyauth) {
          *     a) Append the encoded key to the output string
          *     b) Append the '=' character to the output string
          *     c) Append the encoded value to the output string
-         *     d) If there are more key/value pairs remaining, append a '&' character to the output string
+         *     d) If there are more key/value pairs remaining, append an '&' character to the output string
          * 
          * Creating the Signature Base String:
          * 1) Convert the HTTP method (POST) to uppercase and set the output string equal to this value
@@ -128,7 +128,7 @@ module.exports = function (app, everyauth) {
         var parameterString = "",
           encodedKeys = [
             encodeURIComponent("status"),
-            encodeURIComponent("include_entities"),
+            //encodeURIComponent("include_entities"),
             encodeURIComponent("oauth_consumer_key"),
             encodeURIComponent("oauth_nonce"),
             encodeURIComponent("oauth_signature_method"),
@@ -137,8 +137,8 @@ module.exports = function (app, everyauth) {
             encodeURIComponent("oauth_version")
           ],
           keyValuePairs = {
-            "status": encodedPost,
-            "include_entities": encodeURIComponent("true"),
+            "status": encodeURIComponent("success"),//encodeURIComponent(req.params.message),
+            //"include_entities": encodeURIComponent("true"),
             "oauth_consumer_key": encodeURIComponent(process.env.QUO_TWIT_KEY),
             "oauth_nonce": encodeURIComponent(nonce),
             "oauth_signature_method": encodeURIComponent("HMAC-SHA1"),
@@ -146,7 +146,7 @@ module.exports = function (app, everyauth) {
             "oauth_token": encodeURIComponent(everyauth.user.accessToken),
             "oauth_version": encodeURIComponent("1.0")
           },
-          i = 0;
+          i;
           
           encodedKeys.sort();
           
@@ -156,29 +156,33 @@ module.exports = function (app, everyauth) {
           }
           parameterString =
             parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]]);
+          console.log("\nParameter String:\n" + parameterString + "\n");
             
           // Creating the Signature Base String
           var signatureBaseString = "POST&" + encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
             "&" + encodeURIComponent(parameterString);
+          console.log("\nSignature Base String:\n" + signatureBaseString + "\n");
           
           // Creating the Signing Key
           var signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
             encodeURIComponent(everyauth.user.accessSecret);
+          console.log("\nSigning Key:\n" + signingKey + "\n");
           
           // Calculate the signature
           var hmac = crypto.createHmac("sha1", signingKey),
             hash = hmac.update(signatureBaseString),
             digest = hmac.digest("base64");
+          console.log("\nDigest:\n" + digest + "\n");
           
           return digest;
       }(),
     
       // Authorization header for the specialized POST to Twitter
       authInfo = "OAuth oauth_consumer_key=\"" + process.env.QUO_TWIT_KEY + "\", " + 
-        "oauth_nonce=\"" + nonce + "\", " + 
-        "oauth_signature=\"" + encodeURIComponent(signature) + "\", " + 
+        "oauth_nonce=\"" + nonce + "\", " +
+        "oauth_signature=\"" + encodeURIComponent(signature) + "\", " +
         "oauth_signature_method=\"HMAC-SHA1\", " + 
-        "oauth_timestamp=\"" + timestamp + "\", " + 
+        "oauth_timestamp=\"" + timestamp + "\", " +
         "oauth_token=\"" + accessToken + "\", " + 
         "oauth_version=\"1.0\"",
       
@@ -189,11 +193,11 @@ module.exports = function (app, everyauth) {
           path: '/1/statuses/update.json',
           method: 'POST',
           headers: {
-            'Accept' : '*/*',
-            'Connection' : 'close',
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': encodedPost.length,
-            'Authorization': authInfo
+            "Accept" : '*/*',
+            "Connection" : 'close',
+            "Content-Type": 'application/x-www-form-urlencoded',
+            "Content-Length": "status=success".length,
+            "Authorization": authInfo
           }
         },
         function (res) {
@@ -202,8 +206,24 @@ module.exports = function (app, everyauth) {
             console.log('Response: ' + chunk);
           });
         });
+
+    // Reverse engineer the HTTPS object
+    /*for (var e in post_req) {
+      console.log(e);
+    }*/
+    //console.log("\nHeaders:\n" + post_req.getHeader('Authorization') + "\n");
+    //console.log("\nauthInfo:\n" + authInfo + "\n");
+    //console.log("\nMessage:\n" + req.params.message + "\n");
+    //console.log("\nEncoded Signature:\n" + encodeURIComponent(signature) + "\n");
+    //console.log("\nConsumer Key:\n" + process.env.QUO_TWIT_KEY + "\n");
+    //console.log("\nConsumer Secret:\n" + process.env.QUO_TWIT_SECRET + "\n");
+    //console.log("\nAccess Token:\n" + everyauth.user.accessToken + "\n");
+    //console.log("\nAccess Secret:\n" + everyauth.user.accessSecret + "\n");
+    //console.log("\nContent Length:\n" + "status=hello".length + "\n");
+
     // Send request
-    post_req.write("status=" + encodedPost);
+    /*"status=" + JSON.stringify(encodedPost)*/
+    post_req.write("status=success");
     post_req.end();
   });
   
