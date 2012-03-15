@@ -68,30 +68,44 @@ module.exports = function (client) {
        + 'WHERE accountId=?',
       [id],
       function (err, results, fields) {
-        var result = (results && results.length !== 0) ? results[0].accountId : -1;
+        var result = (results && results.length !== 0) ? results[0].profile : null;
         callback(result);
       }
     );
   };
   
   // Creates a main user account with given credentials, triggering the callback
-  // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
-  client.addMediaProfile = function (id, profile, media, callback) {
+  // with the resultant id found for the user (null if new; some profile if update)
+  client.updateMediaProfile = function (id, profile, media, callback) {
     client.getMediaProfile(id, media, function (result) {
-      if (result === -1) {
-        client.query(
-          "insert into " + media + " " // Weird bug; cannot name media table except inline
-           + "set accountId = ?, "
-           + "profile = ?",
-           [id, profile],
-           function (err, results, fields) {
-             if (err) {
-               console.log(err);
-             }
-             callback(result);
+      // Construct the query params so they can be changed easily if it's an add vs update
+      var queryConfig = [
+        "insert into " + media + " " // Weird bug; cannot name media table except inline
+         + "set accountId = ?, "
+         + "profile = ?",
+         
+         [id, profile],
+         
+         function (err, results, fields) {
+           if (err) {
+             console.log(err);
            }
-        );
+           callback(result);
+         }
+      ];
+      
+      // If our getMediaProfile returned a profile, it must be an update, not an add
+      if (result) {
+        queryConfig[0] = "update " + media + " set profile = ? where accountId = ?";
+        queryConfig[1] = [profile, id];
       }
+      
+      // Execute the query, whether it was an update or add
+      client.query(
+        queryConfig[0],
+        queryConfig[1],
+        queryConfig[2]
+      );
     });
   };
   
