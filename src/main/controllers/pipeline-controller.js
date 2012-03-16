@@ -95,7 +95,7 @@ module.exports = function (app, everyauth) {
     var timestamp = JSON.stringify(Math.floor(((new Date().getTime()) + (8*60*60))/1000)),
       nonce = sechash.basicHash('md5', timestamp),
       accessToken = everyauth.user.accessToken,
-      encodedPost = { "status" : encodeURIComponent(req.params.message) },
+      encodedPost = req.params.message,
       signature = function () {
         /*
          * Creating the Parameter String:
@@ -137,7 +137,7 @@ module.exports = function (app, everyauth) {
             encodeURIComponent("oauth_version")
           ],
           keyValuePairs = {
-            "status": encodeURIComponent("success"),//encodeURIComponent(req.params.message),
+            "status": encodeURIComponent(encodedPost),//encodeURIComponent(req.params.message),
             //"include_entities": encodeURIComponent("true"),
             "oauth_consumer_key": encodeURIComponent(process.env.QUO_TWIT_KEY),
             "oauth_nonce": encodeURIComponent(nonce),
@@ -196,14 +196,16 @@ module.exports = function (app, everyauth) {
             "Accept" : '*/*',
             "Connection" : 'close',
             "Content-Type": 'application/x-www-form-urlencoded',
-            "Content-Length": "status=success".length,
+            "Content-Length": "status=".length + encodedPost.length,
             "Authorization": authInfo
           }
         },
-        function (res) {
-          res.setEncoding('utf8');
-          res.on('data', function (chunk) {
-            console.log('Response: ' + chunk);
+        function (twitterResponse) {
+          twitterResponse.setEncoding('utf8');
+          twitterResponse.on('data', function (chunk) {
+            console.log("\nRes:\n" + res);
+            console.log(chunk);
+            res.send(chunk);
           });
         });
 
@@ -223,8 +225,9 @@ module.exports = function (app, everyauth) {
 
     // Send request
     /*"status=" + JSON.stringify(encodedPost)*/
-    post_req.write("status=success");
+    post_req.write("status=" + encodedPost);
     post_req.end();
+
   });
   
 }
