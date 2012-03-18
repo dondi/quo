@@ -75,57 +75,42 @@ module.exports = function (app, everyauth) {
   
   
   /*
+   * GET /fbpost/:message
+   */
+  app.get('/fbpost/:message', function (req, res) {
+    
+  });
+  
+  
+  /*
    * POST /tweet/:message
    *   [TODO]
    */
   app.get('/tweet/:message', function (req, res) {
-    
-    /*
-     * https://dev.twitter.com/docs/api
-     * https://dev.twitter.com/docs/api/1/post/statuses/update
-     * https://dev.twitter.com/docs/auth/authorizing-request
-     * https://dev.twitter.com/docs/auth/creating-signature
-     * https://dev.twitter.com/discussions/305
-     * 
-     * Example OAuth request can be generated on dev.twitter.com
-     */
-    
-    //res.send('You said: ' + req.params.message);
-    
+    // Generate a time stamp based on GMT (Universal Time)
     var timestamp = JSON.stringify(Math.floor(((new Date().getTime()) + (8*60*60))/1000)),
+    
+      // The nonce is used by Twitter to prevent duplicate requests
       nonce = sechash.basicHash('md5', timestamp),
+      
+      // The access token gives Quo permission to alter the user's account
       accessToken = everyauth.user.accessToken,
+      
+      // Fetch the user's Tweet
       encodedPost = req.params.message,
+      
+      // The signature ensures the HTTPS request has not been altered in transit
       signature = function () {
-        /*
-         * Creating the Parameter String:
-         * 1) Percent encode every key and value that will be signed
-         * 2) Sort the list of parameters alphabetically by encoded key
-         * 3) For each key/value pair:
-         *     a) Append the encoded key to the output string
-         *     b) Append the '=' character to the output string
-         *     c) Append the encoded value to the output string
-         *     d) If there are more key/value pairs remaining, append an '&' character to the output string
-         * 
-         * Creating the Signature Base String:
-         * 1) Convert the HTTP method (POST) to uppercase and set the output string equal to this value
-         * 2) Append the '&' character to the output string
-         * 3) Percent encode the URL and append it to the output string
-         * 4) Append the '&' character to the output string
-         * 5) Percent encode the parameter string and append it to the output string
-         * 
-         * Creating the Signing Key
-         * 1) Percent encode the consumer secret
-         * 2) Append a '&' character
-         * 3) Append the percent encoded token secret
-         * 
-         * Calculating the Signature
-         * 1) Pass the signature base string and signing key to the HMAC-SHA1 hashing algorithm
-         * 2) base64 encode the output of the HMAC signing function
-         */
-        
-        // Creating the Parameter String
+        // The parameter string contains all info required by OAuth including the status
         var parameterString = "",
+          
+          /*
+           * encodedKeys and keyValuePairs go hand-in-hand. encodedKeys is to be 
+           * lexicographically sorted such that the corresponding values can be 
+           * retrieved from keyValuePairs and added to the parameter string in order.
+           * OAuth requires that the keys and values are added to the parameter string 
+           * based on the alphabetical ordering of the encoded keys.
+           */
           encodedKeys = [
             encodeURIComponent("status"),
             //encodeURIComponent("include_entities"),
@@ -137,7 +122,7 @@ module.exports = function (app, everyauth) {
             encodeURIComponent("oauth_version")
           ],
           keyValuePairs = {
-            "status": encodeURIComponent(encodedPost),//encodeURIComponent(req.params.message),
+            "status": encodeURIComponent(encodedPost),
             //"include_entities": encodeURIComponent("true"),
             "oauth_consumer_key": encodeURIComponent(process.env.QUO_TWIT_KEY),
             "oauth_nonce": encodeURIComponent(nonce),
@@ -146,38 +131,43 @@ module.exports = function (app, everyauth) {
             "oauth_token": encodeURIComponent(everyauth.user.accessToken),
             "oauth_version": encodeURIComponent("1.0")
           },
+          
+          // The base string of the hash that is the signature
+          signatureBaseString = "",
+          
+          // The salt that will be used to hash the signatureBaseString
+          signingKey = "",
+          
+          // This is simply a counter variable
           i;
           
-          encodedKeys.sort();
-          
-          for (i = 0; i < encodedKeys.length - 1; i++){
-            parameterString =
-              parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]] + "&");
-          }
+        encodedKeys.sort();
+        
+        // Generate the parameter string
+        for (i = 0; i < encodedKeys.length - 1; i++){
           parameterString =
-            parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]]);
-          console.log("\nParameter String:\n" + parameterString + "\n");
-            
-          // Creating the Signature Base String
-          var signatureBaseString = "POST&" + encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
-            "&" + encodeURIComponent(parameterString);
-          console.log("\nSignature Base String:\n" + signatureBaseString + "\n");
+            parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]] + "&");
+        }
+        parameterString =
+          parameterString.concat(encodedKeys[i] + "=" + keyValuePairs[encodedKeys[i]]);
           
-          // Creating the Signing Key
-          var signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
-            encodeURIComponent(everyauth.user.accessSecret);
-          console.log("\nSigning Key:\n" + signingKey + "\n");
-          
-          // Calculate the signature
-          var hmac = crypto.createHmac("sha1", signingKey),
-            hash = hmac.update(signatureBaseString),
-            digest = hmac.digest("base64");
-          console.log("\nDigest:\n" + digest + "\n");
-          
-          return digest;
+        // Create the Signature Base String
+        signatureBaseString = "POST&" +
+          encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
+          "&" + encodeURIComponent(parameterString);
+        
+        // Create the Signing Key
+        signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
+          encodeURIComponent(everyauth.user.accessSecret);
+        
+        // Return the signature
+        return crypto
+          .createHmac("sha1", signingKey)
+          .update(signatureBaseString)
+          .digest("base64");
       }(),
     
-      // Authorization header for the specialized POST to Twitter
+      // Authorized header for the specialized POST to Twitter
       authInfo = "OAuth oauth_consumer_key=\"" + process.env.QUO_TWIT_KEY + "\", " + 
         "oauth_nonce=\"" + nonce + "\", " +
         "oauth_signature=\"" + encodeURIComponent(signature) + "\", " +
@@ -203,28 +193,11 @@ module.exports = function (app, everyauth) {
         function (twitterResponse) {
           twitterResponse.setEncoding('utf8');
           twitterResponse.on('data', function (chunk) {
-            console.log("\nRes:\n" + res);
-            console.log(chunk);
             res.send(chunk);
           });
         });
 
-    // Reverse engineer the HTTPS object
-    /*for (var e in post_req) {
-      console.log(e);
-    }*/
-    //console.log("\nHeaders:\n" + post_req.getHeader('Authorization') + "\n");
-    //console.log("\nauthInfo:\n" + authInfo + "\n");
-    //console.log("\nMessage:\n" + req.params.message + "\n");
-    //console.log("\nEncoded Signature:\n" + encodeURIComponent(signature) + "\n");
-    //console.log("\nConsumer Key:\n" + process.env.QUO_TWIT_KEY + "\n");
-    //console.log("\nConsumer Secret:\n" + process.env.QUO_TWIT_SECRET + "\n");
-    //console.log("\nAccess Token:\n" + everyauth.user.accessToken + "\n");
-    //console.log("\nAccess Secret:\n" + everyauth.user.accessSecret + "\n");
-    //console.log("\nContent Length:\n" + "status=hello".length + "\n");
-
     // Send request
-    /*"status=" + JSON.stringify(encodedPost)*/
     post_req.write("status=" + encodedPost);
     post_req.end();
 
