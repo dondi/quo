@@ -1,4 +1,4 @@
-#profile.panel
+#profile.panel.wrapper
   h2 Edit your profile
   div
     label(for="user-name") Your full name :
@@ -281,5 +281,8 @@
       option(value="29") 29
       option(value="30") 30
       option(value="31") 31
+    #twitter-login
+    a(href='/auth/twitter', style='border: 0px')
+      img(style='border: 0px', src='https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png')
   button#save-profile Save changes
-      
+  br

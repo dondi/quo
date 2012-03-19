@@ -1,7 +1,7 @@
 body {
     position: relative;
-    background-color: #FFFFFE;
-	font-family: "coquette-1", helvetica;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-image: url('logo.png');
 }
 
 h1 {
@@ -16,36 +16,35 @@ button {
 
 .panel {
     position: relative;
-    opacity: 80%;
-    color: black;
-    border: 1px;
-    border-style: solid;
+    /*
     border-top-left-radius: 10px 10px;
     border-top-right-radius: 10px 10px;
     border-bottom-left-radius: 10px 10px;
-    border-bottom-right-radius: 10px 10px;
+    border-bottom-right-radius: 10px 10px;*/
     text-align: center;
     font-weight: 100;
     font-size: 105%;
-    box-shadow: 0px 7px 25px #000000;
+    /*box-shadow: 0px 7px 25px #000000;
     -moz-box-shadow: 0px 7px 25px #000000;
-    -webkit-box-shadow: 0px 7px 25px #000000;
-    background-color: #EEF3E2;
-    border-color: #EEF3E2;
+    -webkit-box-shadow: 0px 7px 25px #000000;*/
+    /*border-color: #EEF3E2;*/
     margin-left: auto;
     margin-right: auto;
+    padding: 20px;
 }
 
 #login {
-	height 500px;
-	width: 500px;
+	height 550px;
+	width: 350px;
 	margin-top: 200px;
+  background-color: #96FFF7;
 }
 
 #main {
     height: 500px;
     width: 700px;
     margin-top: 100px;
+    background-color: #FF96BF;
 }
 
 #status {
@@ -64,5 +63,6 @@ button {
 	height 500px;
 	width: 500px;
 	margin-top: 200px;
+  background-color: #A6A6FF;
 }
 
