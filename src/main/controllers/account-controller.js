@@ -58,4 +58,14 @@ module.exports = function (app, client, everyauth) {
     });
   });
   
+  /*
+   *  GET /profile
+   *  renders the profile screen
+   */
+  app.get('/profile', function (req, res) {
+	    res.render('profile', {
+	      layout: true
+	    });
+	  });
+  
 }
