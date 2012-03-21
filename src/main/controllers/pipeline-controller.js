@@ -193,6 +193,7 @@ module.exports = function (app, everyauth) {
         function (twitterResponse) {
           twitterResponse.setEncoding('utf8');
           twitterResponse.on('data', function (chunk) {
+        	  console.log(chunk);
             res.send(chunk);
           });
         });

@@ -10,19 +10,20 @@ module.exports = function (app, client, everyauth) {
    * GET /
    *   Renders the login index
    */
-  app.get('/', function (req, res) {
+ 
+app.get('/', function (req, res) {
     res.render('index', {
       layout: true
     });
   });
-  
+
   
   /*
    * POST /
    *   Handles login credentials
    */
   app.post('/', function (req, res) {
-    res.redirect('/main');
+    res.redirect('/auth/twitter');
   });
   
   

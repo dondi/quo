@@ -10,5 +10,7 @@ $(function () {
   $("#user")
     .focus();
     
-  $("#login-button")
+  $("#login-button").click(function() {
+	 window.location = "/auth/twitter"; 
+  });
 });
