@@ -1,74 +1,74 @@
 html {
-  overflow: clipped;
+    overflow: clipped;
 }
 
 body {
-  position: relative;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-image: url('logo.png');
+    position: relative;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-image: url('logo.png');
 }
 
 .transparency {
-  display: block;
-  top: -100%;
-  position: absolute;
-  width: 100%;
-  height: 300%;
-  opacity: 0.3;
-  background-color: #FFFFFF;
+    display: block;
+    top: -100%;
+    position: absolute;
+    width: 100%;
+    height: 300%;
+    opacity: 0.3;
+    background-color: #FFFFFF;
 }
 
 h1 {
-  font-size: 46px;
-  text-align: left;
-  margin-top: -32px;
-  margin-left: -22px;
+    font-size: 46px;
+    text-align: left;
+    margin-top: -32px;
+    margin-left: -22px;
 }
 
 button {
-
+    
 }
 
 .panel {
     position: relative;
     border: 6px solid black;
-/*    border-style: solid;
-    border-width: 1px;
-    border-top-left-radius: 5px 5px;
-    border-top-right-radius: 5px 5px;
-    border-bottom-left-radius: 5px 5px;
-    border-bottom-right-radius: 5px 5px;*/
+    /*    border-style: solid;
+     border-width: 1px;
+     border-top-left-radius: 5px 5px;
+     border-top-right-radius: 5px 5px;
+     border-bottom-left-radius: 5px 5px;
+     border-bottom-right-radius: 5px 5px;*/
     text-align: center;
     font-weight: 100;
     font-size: 105%;
-/*    box-shadow: 0px 0px 50px #7B7B7B;
-    -moz-box-shadow: 0px 0px 50px #7B7B7B;
-    -webkit-box-shadow: 0px 0px 50px #7B7B7B;*/
+    /*    box-shadow: 0px 0px 50px #7B7B7B;
+     -moz-box-shadow: 0px 0px 50px #7B7B7B;
+     -webkit-box-shadow: 0px 0px 50px #7B7B7B;*/
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
 }
 
 .inner-panel {
-  position: relative;
-  width: 100px;
-  margin-left: auto;
-  margin-right: auto;
-  text-align: left;
+    position: relative;
+    width: 100px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
 }
 
 #login {
 	width: 400px;
 	margin-top: 150px;
-  background-color: #65FFF4;
-
+    background-color: #65FFF4;
+    
 }
 
 #main {
-  width: 550px;
-  margin-top: 100px;
-  background-color: #9964FF;
-
+    width: 550px;
+    margin-top: 100px;
+    background-color: #9964FF;
+    
 }
 
 #status {
@@ -86,76 +86,86 @@ button {
 #profile {
 	width: 500px;
 	margin-top: 200px;
-  background-color: #DBFF64;
-
+    background-color: #DBFF64;
+    
 }
 
 #error-alert {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 80px;
-  width: 150px;
-  padding: 20px;
-  text-align: center;
-  background-color: #FE5652;
-  display: none;
-/*  border-top-color: #FFA2A0;
-  border-bottom-color: #BF605E;
-  border-left-color: #B44D4B;
-  border-right-color: #FF817D;*/
-  border-width: 3px; 
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 80px;
+    width: 150px;
+    padding: 20px;
+    text-align: center;
+    background-color: #FE5652;
+    display: none;
+    /*  border-top-color: #FFA2A0;
+     border-bottom-color: #BF605E;
+     border-left-color: #B44D4B;
+     border-right-color: #FF817D;*/
+    border-width: 3px; 
 }
 
 #error-alert #error-message {
-  height: 60px;
-  overflow: clipped;
+    height: 60px;
+    overflow: clipped;
 }
 
 #error-exit {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
-  height: 20px;
-  width: 20px;
-  font-weight: bold;
-  border: 3px solid black;
-  border-radius: 50%;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    height: 20px;
+    width: 20px;
+    font-weight: bold;
+    border: 3px solid black;
+    border-radius: 50%;
 }
 
 #error-exit:hover {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .error-button {
-  opacity: .6;
+    opacity: .6;
 }
 
 .error-button-press {
-  opacity: .9;
+    opacity: .9;
 }
 
 .hip-button {
-  height: auto;
-  padding: 0;
-  background-color: #FFF;
-  border-width: 2px;
-  opacity: 1;
-  text-align: center
+    height: auto;
+    padding: 0;
+    background-color: #FFF;
+    border-width: 2px;
+    opacity: 1;
+    text-align: center
+    -moz-transition-property: all;
+    -moz-transition-duration: 0.5s;
+    -webkit-transition-property: all;
+    -webkit-transition-duration: 0.5s;
 }
 
 .hip-button-press {
-  background-color: #DDD;
+    background-color: #DDD;
 }
 
 .hip-button:hover {
-  cursor: pointer;
+    box-shadow: 0 4px 12px #222;
+    cursor: pointer;
+}
+
+.disabled-or-inactive {
+    background-color: #ccc;
+    color: #aaa;
 }
 
 #login-button {
-  width: 40px;
+    width: 40px;
 }
 
 #post-this {
-  width: 80px;
+    width: 80px;
 }
