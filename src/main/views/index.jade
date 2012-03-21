@@ -1,14 +1,16 @@
+.transparency
 #login.panel.wrapper
-  h1 Welcome to Quo
-  h2 Login
-  - if (typeof(loginFlash) != 'undefined')
-    p#flashMessage.goodMessage= loginFlash
-  - if (typeof(loginBadFlash) != 'undefined')
-    p#flashMessage.badMessage= loginBadFlash
-  p Username
-  input(type="text", id="user", name="user")
-  p Password
-  input(type="password", id="pass", name="pass")
-  br
-  button#login-button(class="topMargin") Login
+  h1 WelcomeToQuo
+  .inner-panel
+    h2 .login
+    div
+      label(for="username") username
+    div
+      input#username(type="text", name="username")
+    div
+      label(for="password") password
+    div
+      input#password(type="password", name="password")
+    div
+      button#login-button(class="topMargin") Login
 script(type="text/javascript", src="../js/display/login-display.js")

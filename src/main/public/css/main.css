@@ -1,13 +1,28 @@
+html {
+  overflow: clipped;
+}
+
 body {
-    position: relative;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-image: url('logo.png');
+  position: relative;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-image: url('logo.png');
+}
+
+.transparency {
+  display: block;
+  top: -100%;
+  position: absolute;
+  width: 100%;
+  height: 300%;
+  opacity: 0.3;
+  background-color: #FFFFFF;
 }
 
 h1 {
-    font-size: 205%;
-    margin-left: auto;
-    margin-right: auto;
+  font-size: 46px;
+  text-align: left;
+  margin-top: -32px;
+  margin-left: -22px;
 }
 
 button {
@@ -16,35 +31,45 @@ button {
 
 .panel {
     position: relative;
-    /*
-    border-top-left-radius: 10px 10px;
-    border-top-right-radius: 10px 10px;
-    border-bottom-left-radius: 10px 10px;
-    border-bottom-right-radius: 10px 10px;*/
+    border: 6px solid black;
+/*    border-style: solid;
+    border-width: 1px;
+    border-top-left-radius: 5px 5px;
+    border-top-right-radius: 5px 5px;
+    border-bottom-left-radius: 5px 5px;
+    border-bottom-right-radius: 5px 5px;*/
     text-align: center;
     font-weight: 100;
     font-size: 105%;
-    /*box-shadow: 0px 7px 25px #000000;
-    -moz-box-shadow: 0px 7px 25px #000000;
-    -webkit-box-shadow: 0px 7px 25px #000000;*/
-    /*border-color: #EEF3E2;*/
+/*    box-shadow: 0px 0px 50px #7B7B7B;
+    -moz-box-shadow: 0px 0px 50px #7B7B7B;
+    -webkit-box-shadow: 0px 0px 50px #7B7B7B;*/
     margin-left: auto;
     margin-right: auto;
     padding: 20px;
 }
 
+.inner-panel {
+  position: relative;
+  width: 100px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: left;
+}
+
 #login {
-	height 550px;
-	width: 350px;
-	margin-top: 200px;
-  background-color: #96FFF7;
+	width: 400px;
+	margin-top: 150px;
+  background-color: #65FFF4;
+
 }
 
 #main {
-    height: 350px;
-    width: 700px;
-    margin-top: 30px;
-    background-color: #6D48D7;
+  height: 350px;
+  width: 700px;
+  margin-top: 100px;
+  background-color: #9964FF;
+
 }
 
 #status {
@@ -60,19 +85,33 @@ button {
 }
 
 #profile {
-	height: 500px;
 	width: 500px;
 	margin-top: 200px;
-  background-color: #A6A6FF;
+  background-color: #DBFF64;
+
 }
 
 #error-message {
-  margin-top: 80px;
+  position: absolute;
+  top: 0px;
+  left: 0px;
   height: 80px;
   width: 150px;
   padding: 20px;
   text-align: center;
   background-color: #FE5652;
   display: none;
+/*  border-top-color: #FFA2A0;
+  border-bottom-color: #BF605E;
+  border-left-color: #B44D4B;
+  border-right-color: #FF817D;*/
+  border-width: 3px; 
+}
+
+#hip-button {
+  height: 10px;
+  width: 20px;
+  background-color: #FFFFFF;
+  border-width: 1px;
 }
 
