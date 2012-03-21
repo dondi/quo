@@ -65,8 +65,7 @@ button {
 }
 
 #main {
-  height: 350px;
-  width: 700px;
+  width: 550px;
   margin-top: 100px;
   background-color: #9964FF;
 
@@ -91,7 +90,7 @@ button {
 
 }
 
-#error-message {
+#error-alert {
   position: absolute;
   top: 0px;
   left: 0px;
@@ -108,10 +107,55 @@ button {
   border-width: 3px; 
 }
 
-#hip-button {
-  height: 10px;
-  width: 20px;
-  background-color: #FFFFFF;
-  border-width: 1px;
+#error-alert #error-message {
+  height: 60px;
+  overflow: clipped;
 }
 
+#error-exit {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  height: 20px;
+  width: 20px;
+  font-weight: bold;
+  border: 3px solid black;
+  border-radius: 50%;
+}
+
+#error-exit:hover {
+  cursor: pointer;
+}
+
+.error-button {
+  opacity: .6;
+}
+
+.error-button-press {
+  opacity: .9;
+}
+
+.hip-button {
+  height: auto;
+  padding: 0;
+  background-color: #FFF;
+  border-width: 2px;
+  opacity: 1;
+  text-align: center
+}
+
+.hip-button-press {
+  background-color: #DDD;
+}
+
+.hip-button:hover {
+  cursor: pointer;
+}
+
+#login-button {
+  width: 40px;
+}
+
+#post-this {
+  width: 80px;
+}

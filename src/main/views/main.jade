@@ -1,5 +1,4 @@
 .transparency
-#error-message.panel
 #main.panel.wrapper
   h1 Welcome to Quo
   h3 Submit to Quo's Will and Post
@@ -12,9 +11,12 @@
     label(for="twitter-check") Twitter
     input#facebook-check(type="checkbox")
     label(for="facebook-check") Facebook
-  button#post-this Post this
+  #post-this.panel.hip-button Post This
   div
     a(href='/profile') See your profile
+#error-alert.panel
+  #error-message
+  #error-exit.error-button X
 script(src='../js/display/main-display.js')
 script(src='http://code.jquery.com/jquery-latest.min.js')
 script(src='../js/action/post-status.js')
