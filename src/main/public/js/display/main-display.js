@@ -12,5 +12,6 @@ $(function() {
             $("#twitter-check").attr("disabled", "disabled");
         } else {
             $("#twitter-check").removeAttr("disabled");
-        }    });
+        }    
+     });
 });
