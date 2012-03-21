@@ -204,4 +204,30 @@ module.exports = function (app, everyauth) {
 
   });
   
+  /** FILTERS **/
+ 
+  /*
+   * POST /filter/toUpper/:message
+   *   Returns the given message translated to upperCase
+   */
+  app.post('/filter/toUpper/:message', function (req, res) {
+    var result = req.params.message.toUpperCase();
+    res.send(JSON.stringify(result));
+  });
+  
+  /*
+   * POST /filter/noHash/:message
+   *   Returns the given message without hash tags
+   */
+  app.post('/filter/noHash/:message', function (req, res) {
+    var rawMessage = req.params.message.split(" "),
+        result = [];
+    for (var i = 0; i < rawMessage.length; i++) {
+      if (rawMessage[i].charAt(0) !== "#") {
+        result.push(rawMessage[i]);
+      }
+    }
+    res.send(JSON.stringify(result.join(" ")));
+  });
+  
 }

@@ -13,4 +13,5 @@ $(function () {
   $("#login-button").click(function() {
 	 window.location = "/auth/twitter"; 
   });
+  
 });
