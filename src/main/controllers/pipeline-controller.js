@@ -95,6 +95,7 @@ module.exports = function (app, everyauth) {
       
       // The access token gives Quo permission to alter the user's account
       accessToken = everyauth.user.accessToken,
+      accessSecret = everyauth.user.accessSecret,
       
       // Fetch the user's Tweet
       encodedPost = req.params.message,
@@ -128,7 +129,7 @@ module.exports = function (app, everyauth) {
             "oauth_nonce": encodeURIComponent(nonce),
             "oauth_signature_method": encodeURIComponent("HMAC-SHA1"),
             "oauth_timestamp": encodeURIComponent(timestamp),
-            "oauth_token": encodeURIComponent(everyauth.user.accessToken),
+            "oauth_token": encodeURIComponent(accessToken),
             "oauth_version": encodeURIComponent("1.0")
           },
           
@@ -156,9 +157,10 @@ module.exports = function (app, everyauth) {
           encodeURIComponent("https://api.twitter.com/1/statuses/update.json") + 
           "&" + encodeURIComponent(parameterString);
         
+        
         // Create the Signing Key
         signingKey = encodeURIComponent(process.env.QUO_TWIT_SECRET) + "&" +
-          encodeURIComponent(everyauth.user.accessSecret);
+          encodeURIComponent(accessSecret);
         
         // Return the signature
         return crypto
@@ -193,7 +195,6 @@ module.exports = function (app, everyauth) {
         function (twitterResponse) {
           twitterResponse.setEncoding('utf8');
           twitterResponse.on('data', function (chunk) {
-        	  console.log(chunk);
             res.send(chunk);
           });
         });
@@ -202,32 +203,6 @@ module.exports = function (app, everyauth) {
     post_req.write("status=" + encodedPost);
     post_req.end();
 
-  });
-  
-  /** FILTERS **/
- 
-  /*
-   * POST /filter/toUpper/:message
-   *   Returns the given message translated to upperCase
-   */
-  app.post('/filter/toUpper/:message', function (req, res) {
-    var result = req.params.message.toUpperCase();
-    res.send(JSON.stringify(result));
-  });
-  
-  /*
-   * POST /filter/noHash/:message
-   *   Returns the given message without hash tags
-   */
-  app.post('/filter/noHash/:message', function (req, res) {
-    var rawMessage = req.params.message.split(" "),
-        result = [];
-    for (var i = 0; i < rawMessage.length; i++) {
-      if (rawMessage[i].charAt(0) !== "#") {
-        result.push(rawMessage[i]);
-      }
-    }
-    res.send(JSON.stringify(result.join(" ")));
   });
   
 }
