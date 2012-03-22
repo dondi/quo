@@ -60,8 +60,17 @@ button {
 #login {
 	width: 400px;
 	margin-top: 150px;
-    background-color: #65FFF4;
+  background-color: #65FFF4;
     
+}
+
+#login-err {
+  margin: 5px;
+  padding: 5px;
+  width: 100%;
+  background-color: red;
+  color: white;
+  display: none;
 }
 
 #main {

@@ -6,12 +6,22 @@
  */
 
 module.exports = function (app, client, everyauth) {
+
+  // Imports
+  var check = require('validator').check,
+      sanitize = require('validator').sanitize,
+      sechash = require('sechash'),
+
+    // Helper function to sanitize pre-DB layer user input
+    sanitizeAuthentication = function (userInput) {
+      return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+    };
+
   /*
    * GET /
    *   Renders the login index
    */
- 
-app.get('/', function (req, res) {
+  app.get('/', function (req, res) {
     res.render('index', {
       layout: true
     });
@@ -23,7 +33,20 @@ app.get('/', function (req, res) {
    *   Handles login credentials
    */
   app.post('/', function (req, res) {
-    res.redirect('/auth/twitter');
+    var inputs = req.body,
+        user = inputs["user"],
+        pass = inputs["pass"], // TODO: Should be hashed; can tackle later
+        session = req.session;
+    
+    // Sanitize the user input before running through DB
+    if (sanitizeAuthentication(user) || sanitizeAuthentication(pass)) {
+      res.send(false);
+    } else {
+      // Perform database check for authentication
+      client.authenticateCredentials(user, pass, function (result) {
+        res.send(result);
+      });          
+    }
   });
   
   
