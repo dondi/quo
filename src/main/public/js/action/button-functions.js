@@ -20,36 +20,32 @@ $(function () {
                 if (mouseIsOut) {
                     buttonPress = 0;
                 }
-                console.log("button mouseup in body ");
             })
             element.mousedown(function(event) { 
                 buttonPress = 1; 
                 mouseIsOut = 0;
                 press(element);
-                console.log("blue mousedown");
             }).mouseout(function(event) {
                 if (buttonPress) {
                     unpress(element);
-                    console.log("notBlue mouseout");
                 }
                 mouseIsOut = 1;
             }).mouseenter(function(event) {
                 if (buttonPress) {
                     press(element); 
-                    console.log("blue mouseenter");
                 }
                 mouseIsOut = 0;
             }).mouseup(function(event) {
                 if (buttonPress) {
                     unpress(element); 
                     click();
-                    console.log("mouseup and notBlue, button press signifies action. ");
                 }
                 buttonPress = 0;
             });
         }
     };
     
+    /** Precondition: divs used as checkboxes have to already be given size */
     Checkbox = {
             ify: function(element1, element2, press, unpress, click) {
                 var buttonPress = 0,
@@ -127,11 +123,13 @@ $(function () {
     
     Button.ify($("#login-button"), 
             function(e) { 
-                e.addClass("hip-button-press"); 
+                e.addClass("hip-button-press")
+                 .addClass("hip-button-press-login");
             }, 
             
             function(e) { 
-                e.removeClass("hip-button-press"); 
+                e.removeClass("hip-button-press")
+                 .removeClass("hip-button-press-login");
             },
              
             function() {
@@ -139,38 +137,64 @@ $(function () {
 
     Button.ify($("#post-this"), 
             function(e) { 
-                e.addClass("hip-button-press"); 
+                e.addClass("hip-button-press")
+                 .addClass("hip-button-press-main");
             }, 
             
             function(e) { 
-                e.removeClass("hip-button-press"); 
+                e.removeClass("hip-button-press")
+                 .removeClass("hip-button-press-main");
             },
              
             function() {
             });
     
-/*    //Example use of checkbox.ify funcion
-    Checkbox.ify($("#fake-label"), $("#fake-box"),
+    /** Use of checkbox function for YELL-IT modifications */
+    Checkbox.ify($("#yell-it-label"), $("#yell-it-box"),
             function(e) {
-                e.addClass("button-press"); 
+                e.addClass("hip-checkbox-press"); 
             },
             
             function(e) {
-                e.removeClass("button-press"); 
+                e.removeClass("hip-checkbox-press"); 
             },
             
             function(e) {
                 if (!checkboxValue) {
-                    e.addClass("button-press"); 
+                    e.addClass("hip-checkbox-press"); 
                     e.html('&#x2713;'); 
                     checkboxValue = 1;
                 } else {
-                    e.removeClass("button-press");
+                    e.removeClass("hip-button-press");
                     e.html(''); 
                     checkboxValue = 0;
                 }
             }
         );   
-        */ 
+
+    /** Use of checkbox function for Trunkify modifications */
+    /* Not yet working, some kind of kink when I have two checkboxes */
+    /*
+    Checkbox.ify($("#trunkify-label"), $("#trunkify-box"),
+            function(e) {
+                e.addClass("hip-checkbox-press"); 
+            },
+            
+            function(e) {
+                e.removeClass("hip-checkbox-press"); 
+            },
+            
+            function(e) {
+                if (!checkboxValue) {
+                    e.addClass("hip-checkbox-press"); 
+                    e.html('&#x2713;'); 
+                    checkboxValue = 1;
+                } else {
+                    e.removeClass("hip-checkbox-press");
+                    e.html(''); 
+                    checkboxValue = 0;
+                }
+            }
+        );   */
     
 });

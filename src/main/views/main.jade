@@ -7,11 +7,14 @@
   #posting-section
     textarea#status
   div
-    input#twitter-check(type="checkbox")
-    label(for="twitter-check") Twitter
-    input#facebook-check(type="checkbox")
-    label(for="facebook-check") Facebook
-  #post-this.panel.hip-button Post This
+    span#yell-it.hip-checkbox-set
+      span#yell-it-box.hip-button.hip-checkbox
+      span#yell-it-label.hip-label YELL IT!
+    span .  .  .  .  .
+    span#trunkify.hip-checkbox-set
+      span#trunkify-box.hip-button.hip-checkbox
+      span#trunkify-label.hip-label trunkify
+  #post-this.panel.hip-button.hover-button Post This
   div
     a(href='/profile') See your profile
 #error-alert.panel

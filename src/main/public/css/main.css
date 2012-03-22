@@ -58,19 +58,19 @@ button {
 }
 
 #login {
-	width: 400px;
-	margin-top: 150px;
-  background-color: #65FFF4;
+  	width: 400px;
+  	margin-top: 150px;
+    background-color: #65FFF4;
     
 }
 
 #login-err {
-  margin: 5px;
-  padding: 5px;
-  width: 100%;
-  background-color: red;
-  color: white;
-  display: none;
+    margin: 5px;
+    padding: 5px;
+    width: 100%;
+    background-color: red;
+    color: white;
+    display: none;
 }
 
 #main {
@@ -81,8 +81,8 @@ button {
 }
 
 #main a {
-  color: black;
-  padding: 10px;
+    color: black;
+    padding: 10px;
 }
 
 #status {
@@ -98,9 +98,9 @@ button {
 }
 
 #profile {
-	width: 500px;
-	margin-top: 200px;
-  background-color: #DBFF64;
+  	width: 500px;
+  	margin-top: 200px;
+    background-color: #DBFF64;
 }
 
 #error-alert {
@@ -152,6 +152,7 @@ button {
     height: auto;
     padding: 0;
     background-color: #FFF;
+    border-style: solid;
     border-width: 2px;
     opacity: 1;
     text-align: center
@@ -162,12 +163,44 @@ button {
 }
 
 .hip-button-press {
-    background-color: #DDD;
+    box-shadow: 0px 1px 4px 1px #000;
 }
 
-.hip-button:hover {
-    box-shadow: 0 4px 6px #444;
+.hip-button-press-login {
+    background-color: #C0FFFA;
+}
+
+.hip-button-press-main {
+    background-color: #C7AAFF;
+}
+
+.hip-button-press-profile {
+    background-color: #EBFFAA;
+}
+
+.hover-button:hover {
     cursor: pointer;
+}
+
+.hip-checkbox {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    margin-left: 5px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.hip-label {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+    padding: 5px;
+}
+
+.hip-checkbox-press {
+    background-color: #BBB;
 }
 
 .disabled-or-inactive {
@@ -181,4 +214,10 @@ button {
 
 #post-this {
     width: 80px;
+}
+
+#yell-it {
+}
+
+#trunkify {
 }

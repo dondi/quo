@@ -6,6 +6,7 @@ $(function () {
         disableButton = function () {
             postThis
                 .addClass("disabled-or-inactive")
+                .removeClass("hover-button")
                 .unbind("click");    	
         },
         
@@ -13,7 +14,8 @@ $(function () {
             postThis
             	.unbind("click")
             	.click(sendStatus)
-            	.removeClass("disabled-or-inactive");
+            	.removeClass("disabled-or-inactive")
+                .addClass("hover-button");
         },
         
         // Name the sendStatus function so that we can use it later.
