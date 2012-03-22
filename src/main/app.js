@@ -13,7 +13,7 @@ var express = require('express'),
     client = mysql.createClient({
       ACCOUNTS_TABLE : "quo_accounts",
       TWIT_TABLE : "quo_twit",
-      host : "mysql.cs.lmu.edu",
+      host : process.env.QUO_DB_SERVER,
       database : "quo"
     }),
     
