@@ -37,6 +37,18 @@ module.exports = function (app, client, everyauth) {
         "noHash": filterNoHash,
         "yell": filterYell,
         "truncate": filterTruncate
+      },
+      
+      // Runs through the filter list with the given message
+      filterExec = function (message, filters) {
+        filters = filters.split(",");
+        for (var f in filters) {
+          var currentFilter = filterHash[f];
+          if (currentFilter) {
+            message = currentFilter(message);
+          }
+        }
+        return message;
       };
   
   /*
