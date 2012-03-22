@@ -51,10 +51,16 @@ button {
 
 .inner-panel {
     position: relative;
-    width: 100px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.left-align {
     text-align: left;
+}
+
+.right-align {
+    text-align: right;
 }
 
 #login {
@@ -62,6 +68,10 @@ button {
   	margin-top: 150px;
     background-color: #65FFF4;
     
+}
+
+#login-inner-panel {
+    width: 100px;
 }
 
 #login-err {
@@ -80,10 +90,15 @@ button {
     
 }
 
+#main-inner-panel{
+  width: 400px;
+}
+
 #main a {
     color: black;
     padding: 10px;
 }
+
 
 #status {
     height: 100px;

@@ -1,22 +1,24 @@
 .transparency
 #main.panel.wrapper
-  h1 Welcome to Quo
-  h3 Submit to Quo's Will and Post
-  div Character Count: 
-   span#character-count 0
-  #posting-section
-    textarea#status
-  div
-    span#yell-it.hip-checkbox-set
-      span#yell-it-box.hip-button.hip-checkbox
-      span#yell-it-label.hip-label YELL IT!
-    span .  .  .  .  .
-    span#trunkify.hip-checkbox-set
-      span#trunkify-box.hip-button.hip-checkbox
-      span#trunkify-label.hip-label trunkify
-  #post-this.panel.hip-button.hover-button Post This
-  div
-    a(href='/profile') See your profile
+  h1 QuotentialForGreatness
+  #main-inner-panel.inner-panel
+    .right-align
+      h3 Enter in your status below. Choose a modification if ya likes.
+      div Character Count: 
+       span#character-count 0
+      #posting-section
+        textarea#status
+    div
+      span#yell-it.hip-checkbox-set
+        span#yell-it-box.hip-button.hip-checkbox
+        span#yell-it-label.hip-label YELL IT!
+      span .  .  .  .  .
+      span#trunkify.hip-checkbox-set
+        span#trunkify-box.hip-button.hip-checkbox
+        span#trunkify-label.hip-label trunkify
+    #post-this.panel.hip-button.hover-button Post This
+    .left-align
+      a(href='/profile') See your profile
 #error-alert.panel
   #error-message
   #error-exit.error-button X
