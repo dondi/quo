@@ -41,15 +41,14 @@ module.exports = function (app, client, everyauth) {
       
       // Runs through the filter list with the given message
       filterExec = function (message, filters) {
-        var result = "";
         filters = filters.split(",");
         for (var f in filters) {
           var currentFilter = filterHash[filters[f]];
           if (currentFilter) {
-            result = currentFilter(message);
+            message = currentFilter(message);
           }
         }
-        return result;
+        return message;
       };
   
   /*
