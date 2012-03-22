@@ -83,51 +83,35 @@ module.exports = function (app, client, everyauth) {
   });
   
   
-  /*
-   * GET /functions
-   *   [TODO]
-   */
-  app.get('/functions', function (req, res) {
-    // Check if a query was made on the get
-    if (!req.query.q) {
-      res.render('index', {
-        layout: true
-      });
-    
     /*
-     * GET /pipelines?q={search term}
-     *   [TODO]
+     * GET /functions?q={search term}
+     *   [TODO put the functions in the database]
      */
-    } else {
-      
-    }
-  });
-  
-  
-  /*
-   * GET /functions/:id
-   *   [TODO]
-   */
-  app.get('/functions/:id', function (req, res) {
-    res.render('index', {
-      layout: true
+    app.get('/functions', function (req, res) {
+        var key, response = [];
+
+        for (key in filterHash) {
+            // Check if a query was made on the get.
+            if (!req.query.q || key.indexOf(req.query.q) !== -1) {
+                response.push(key);
+            }
+        }
+
+        res.send(response);
     });
-  });
-  
-  
-  /*
-   * GET /fbpost/:message
-   */
-  app.get('/fbpost/:message', function (req, res) {
-    
-  });
-  
+
+    /*
+     * GET /functions/:id
+     *   [TODO put the functions in the database]
+     */
+    app.get('/functions/:id', function (req, res) {
+        res.send(filterHash[req.params.id].toString());
+    });
   
   /*
-   * POST /tweet
-   *   [TODO]
+   * POST /status
    */
-  app.post('/tweet', function (req, res) {
+  app.post('/status', function (req, res) {
     var accountId = req.session.accountId;
     
     // Get the DB info for the user's access token and secret

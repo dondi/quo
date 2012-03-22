@@ -57,7 +57,7 @@ $(function () {
             // Send the status post to the server.
             $.ajax({
                 type: "POST",
-                url: "/tweet",
+                url: "/status",
                 data: status,
                 dataType: "json",
 
