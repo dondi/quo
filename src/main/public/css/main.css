@@ -226,12 +226,35 @@ button {
     color: #aaa;
 }
 
+#login-button, #post-this {
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
 #login-button {
     width: 40px;
 }
 
 #post-this {
     width: 80px;
+}
+
+#post-footer {
+    height: 0.5em;
+    position: relative;
+    width: 100%;
+}
+
+#post-footer > span {
+    position: absolute;
+}
+
+#post-footer > span:first-child {
+    left: 0;
+}
+
+#post-footer > span:last-child {
+    right: 0;
 }
 
 #yell-it {
