@@ -13,11 +13,17 @@
       span .  .  .  .  .
       input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
       label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
+      span .  .  .  .  .
+      input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+      label(for="noctothorpe-checkbox") &nbsp;Noctothorpe
     #post-this.panel.hip-button.hover-button Post This
-    .left-align
-      a(href='/profile') See your profile
+    div#post-footer
+      span
+        a(href="/profile") See your profile
+      span
+        a(href="/") Logout
 #error-alert.panel
   #error-message
   #error-exit.error-button X
-script(src='http://code.jquery.com/jquery-latest.min.js')
-script(src='../js/action/post-status.js')
+script(src="http://code.jquery.com/jquery-latest.min.js")
+script(src="../js/action/post-status.js")

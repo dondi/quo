@@ -75,12 +75,15 @@ button {
 }
 
 #login-err {
-    margin: 5px;
-    padding: 5px;
-    width: 100%;
     background-color: red;
+    box-shadow: 0 8px 16px rgb(128, 0, 0);
     color: white;
     display: none;
+    left: -140px;
+    margin: 5px;
+    padding: 5px;
+    position: absolute;
+    width: 100%;
 }
 
 #main {
@@ -223,12 +226,35 @@ button {
     color: #aaa;
 }
 
+#login-button, #post-this {
+    margin-bottom: 1em;
+    margin-top: 1em;
+}
+
 #login-button {
     width: 40px;
 }
 
 #post-this {
     width: 80px;
+}
+
+#post-footer {
+    height: 0.5em;
+    position: relative;
+    width: 100%;
+}
+
+#post-footer > span {
+    position: absolute;
+}
+
+#post-footer > span:first-child {
+    left: 0;
+}
+
+#post-footer > span:last-child {
+    right: 0;
 }
 
 #yell-it {
