@@ -152,19 +152,24 @@ $(function () {
     /** Use of checkbox function for YELL-IT modifications */
     Checkbox.ify($("#yell-it-label"), $("#yell-it-box"),
             function(e) {
+    	    /* What happens when the checkbox is pressed or held-down */
                 e.addClass("hip-checkbox-press"); 
             },
             
             function(e) {
+            /* What happens when someone mouses away and/or lets go out side the checkbox area */
                 e.removeClass("hip-checkbox-press"); 
             },
             
             function(e) {
+            /* What happens when the button is clicked (i.e. pressed down and released inside the checkbox area */
                 if (!checkboxValue) {
+                	/* The checkbox has been checked */
                     e.addClass("hip-checkbox-press"); 
                     e.html('&#x2713;'); 
                     checkboxValue = 1;
                 } else {
+                	/* The checkbox has been unchecked */
                     e.removeClass("hip-button-press");
                     e.html(''); 
                     checkboxValue = 0;
