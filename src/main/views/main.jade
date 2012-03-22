@@ -14,10 +14,13 @@
       input(type="checkbox")#truncate-to-140-checkbox
       label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
     #post-this.panel.hip-button.hover-button Post This
-    .left-align
-      a(href='/profile') See your profile
+    div(style="width:100%;margin-bottom:1ex")
+      span(style="float:left")
+        a(href="/profile") See your profile
+      span(style="float:right")
+        a(href="/") Logout
 #error-alert.panel
   #error-message
   #error-exit.error-button X
-script(src='http://code.jquery.com/jquery-latest.min.js')
-script(src='../js/action/post-status.js')
+script(src="http://code.jquery.com/jquery-latest.min.js")
+script(src="../js/action/post-status.js")
