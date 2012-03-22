@@ -37,6 +37,19 @@ module.exports = function (client) {
     );
   };
   
+  // Asynchronously checks the accounts table for the given credentials and
+  // returns a boolean denoting a match 
+  client.authenticateCredentials = function (account, password, callback) {
+    client.query(
+      'SELECT accountName, password FROM ' + client.ACCOUNTS_TABLE + 
+      ' WHERE accountName=? and password=?',
+      [account, password],
+      function (err, results, fields) {
+        callback((results && results.length !== 0));
+      }
+    );
+  };
+  
   // Creates a main user account with given credentials, triggering the callback
   // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
   client.createAccount = function (user, pass, email, callback) {

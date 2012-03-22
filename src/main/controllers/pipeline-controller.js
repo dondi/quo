@@ -7,8 +7,37 @@
 
 module.exports = function (app, everyauth) {
   var https = require('https'),
-    sechash = require('sechash'),
-    crypto = require('crypto');
+      sechash = require('sechash'),
+      crypto = require('crypto'),
+      
+      // Message filter to remove hash tags
+      filterNoHash = function (message) {
+        var rawMessage = message.split(" "),
+            result = [];
+        for (var i = 0; i < rawMessage.length; i++) {
+          if (rawMessage[i].charAt(0) !== "#") {
+            result.push(rawMessage[i]);     
+          }
+        }
+        return result.join(" ");
+      },
+      
+      // Message filter to turn it all uppercase
+      filterYell = function (message) {
+        return message.toUpperCase();
+      },
+      
+      // Message filter to truncate for Twitter
+      filterTruncate = function (message) {
+        return message.substring(0, 137) + ((message.length > 140) ? "..." : "");
+      },
+      
+      // Contains the list of filters to be used
+      filterHash = {
+        "noHash": filterNoHash,
+        "yell": filterYell,
+        "truncate": filterTruncate
+      };
   
   /*
    * GET /pipelines
