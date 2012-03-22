@@ -26,7 +26,7 @@ $(function () {
           window.location = "./auth/twitter";
         } else {
           $("#login-err").fadeIn(1000)
-                         .delay(3000)
+                         .delay(500)
                          .fadeOut(1000);
         }
       },
