@@ -22,6 +22,7 @@ $(function () {
 
             // Send the status post to the server.
             $.getJSON("/tweet/" + encodeURIComponent($("#status").val()), function (data) {
+                console.log(JSON.stringify(data));
                 // If something went wrong, data will have an error property.
                 if (data.error) {
                     $("#error-alert").fadeIn("slow");

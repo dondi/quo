@@ -41,11 +41,11 @@ module.exports = function (client) {
   // returns a boolean denoting a match 
   client.authenticateCredentials = function (account, password, callback) {
     client.query(
-      'SELECT accountName, password FROM ' + client.ACCOUNTS_TABLE + 
+      'SELECT accountName, accountId FROM ' + client.ACCOUNTS_TABLE + 
       ' WHERE accountName=? and password=?',
       [account, password],
       function (err, results, fields) {
-        callback((results && results.length !== 0));
+        callback(((results && results.length !== 0) ? results : null));
       }
     );
   };

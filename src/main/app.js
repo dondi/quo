@@ -35,14 +35,6 @@ if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
             "[X] No database will be available to this process.";
 }
 
-// Test; creates quodev account, then tests its Id fetch and a media table creation
-client.createAccount("quodev", "quodev", "quodev@gmail.com", function (result) {console.log(result)});
-client.getAccountId("quodev", function (result) {
-  client.updateMediaProfile(result, JSON.stringify({"test": "stuff"}), client.TWIT_TABLE, function (result) {
-    console.log("[i] Twitter update for quodev successful");
-  });
-});
-
 // Everyauth configs
 if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
   everyauth
@@ -50,15 +42,20 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .consumerKey(process.env.QUO_TWIT_KEY)
       .consumerSecret(process.env.QUO_TWIT_SECRET)
       .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-        // TODO: Search the database and return user if found; otherwise create it
-        // twitUser needs to be made available to account-controller.js
-        // This is a temporary fix until the database is up and available
-        everyauth.user = twitUser;
-        everyauth.user.accessToken = accessToken;
-        everyauth.user.accessSecret = accessSecret;
+        // TODO: Modularize the credential fetch
+        var profile = JSON.stringify({
+          accountToken: accessToken,
+          accountSecret: accessSecret
+        });
+        
+        client.getAccountId(sess.user, function (id) {
+          client.updateMediaProfile(id, profile, client.TWIT_TABLE, function() {
+            console.log("[i] Media profile parsed for " + sess.user);
+          });
+        });
         return twitUser;
       })
-      .redirectPath('/main');
+      .redirectPath("/main");
   /*
   everyauth
     .facebook
@@ -137,7 +134,7 @@ app.configure('production', function () {
  */
 
 require('./controllers/account-controller.js')(app, client, everyauth);
-require('./controllers/pipeline-controller.js')(app, everyauth);
+require('./controllers/pipeline-controller.js')(app, client, everyauth);
 
 /*
  *

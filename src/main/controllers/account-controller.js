@@ -44,6 +44,10 @@ module.exports = function (app, client, everyauth) {
     } else {
       // Perform database check for authentication
       client.authenticateCredentials(user, pass, function (result) {
+        if (result) {
+          session.user = user;
+          session.accountId = result[0].accountId;
+        }
         res.send(result);
       });          
     }
