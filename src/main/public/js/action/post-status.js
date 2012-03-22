@@ -3,6 +3,19 @@ $(function () {
         // it a lot.
     var postThis = $("#post-this"),
 
+        disableButton = function () {
+            postThis
+                .addClass("disabled-or-inactive")
+                .unbind("click");    	
+        },
+        
+        enableButton = function () {
+            postThis
+            	.unbind("click")
+            	.click(sendStatus)
+            	.removeClass("disabled-or-inactive");
+        },
+        
         // Name the sendStatus function so that we can use it later.
         sendStatus = function () {
             // Grab the current status.
@@ -16,9 +29,9 @@ $(function () {
             }
 
             // Put up a little feedback.
-            postThis
-                .addClass("disabled-or-inactive")
-                .unbind("click");
+            disableButton();
+            
+            // Make cursor pinwheel
 
             // Send the status post to the server.
             $.getJSON("/tweet/" + encodeURIComponent($("#status").val()), function (data) {
@@ -31,12 +44,18 @@ $(function () {
                 // No matter what, clear things up for the next status post.
                 $("#status").val("").change();
 
-                // Get the button back in gear.
-                postThis
-                    .click(sendStatus)
-                    .removeClass("disabled-or-inactive");
+                // Get the button back in gear.                
+                // Unmake pinwheel into normal cursor
             });
         };
 
-    postThis.click(sendStatus);
+        
+    $("#status").bind('input change', function() {
+        $("#character-count").text( $("#status").val().length );
+        if (!($("#status").val())) {
+            disableButton();
+        } else {
+            enableButton();
+        }    
+     }).change();
 });

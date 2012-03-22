@@ -49,6 +49,65 @@ $(function () {
             });
         }
     };
+    
+    Checkbox = {
+            ify: function(element1, element2, press, unpress, click) {
+                var buttonPress = 0,
+                    mouseIsOut = 0;
+                
+                $("html").mouseup(function(event) {
+                    if (mouseIsOut) {
+                        if (checkboxValue) {
+                            press(element2);
+                        }
+                        buttonPress = 0;
+                    }
+                });
+                element1.mousedown(function(event) { 
+                    buttonPress = 1; 
+                    mouseIsOut = 0;
+                    press(element2);
+                }).mouseout(function(event) {
+                    if (buttonPress) {
+                        unpress(element2);
+                    }
+                    mouseIsOut = 1;
+                }).mouseenter(function(event) {
+                    if (buttonPress) {
+                        press(element2); 
+                    }
+                    mouseIsOut = 0;
+                }).mouseup(function(event) {
+                    if (buttonPress) {
+                        unpress(element2); 
+                        click(element2);
+                    }
+                    buttonPress = 0;
+                });
+                element2.mousedown(function(event) { 
+                    buttonPress = 1; 
+                    mouseIsOut = 0;
+                    press(element2);
+                }).mouseout(function(event) {
+                    if (buttonPress) {
+                        unpress(element2);
+                    }
+                    mouseIsOut = 1;
+                }).mouseenter(function(event) {
+                    if (buttonPress) {
+                        press(element2); 
+                    }
+                    mouseIsOut = 0;
+                }).mouseup(function(event) {
+                    if (buttonPress) {
+                        unpress(element2); 
+                        click(element2);
+                    }
+                    buttonPress = 0;
+                });
+            }
+        };
+        
 
     
     /** Things the buttons will do when pressed, unpressed, or clicked */
@@ -89,5 +148,29 @@ $(function () {
              
             function() {
             });
-
+    
+/*    //Example use of checkbox.ify funcion
+    Checkbox.ify($("#fake-label"), $("#fake-box"),
+            function(e) {
+                e.addClass("button-press"); 
+            },
+            
+            function(e) {
+                e.removeClass("button-press"); 
+            },
+            
+            function(e) {
+                if (!checkboxValue) {
+                    e.addClass("button-press"); 
+                    e.html('&#x2713;'); 
+                    checkboxValue = 1;
+                } else {
+                    e.removeClass("button-press");
+                    e.html(''); 
+                    checkboxValue = 0;
+                }
+            }
+        );   
+        */ 
+    
 });

@@ -71,6 +71,11 @@ button {
     
 }
 
+#main a {
+  color: black;
+  padding: 10px;
+}
+
 #status {
     height: 100px;
     width: 400px;
@@ -86,8 +91,7 @@ button {
 #profile {
 	width: 500px;
 	margin-top: 200px;
-    background-color: #DBFF64;
-    
+  background-color: #DBFF64;
 }
 
 #error-alert {
@@ -153,7 +157,7 @@ button {
 }
 
 .hip-button:hover {
-    box-shadow: 0 4px 12px #222;
+    box-shadow: 0 4px 6px #444;
     cursor: pointer;
 }
 
