@@ -29,6 +29,15 @@ button {
     
 }
 
+.wrapper {
+    position: relative;
+}
+
+.panel, .back-panel {
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .panel {
     position: relative;
     border: 6px solid black;
@@ -44,9 +53,24 @@ button {
     /*    box-shadow: 0px 0px 50px #7B7B7B;
      -moz-box-shadow: 0px 0px 50px #7B7B7B;
      -webkit-box-shadow: 0px 0px 50px #7B7B7B;*/
-    margin-left: auto;
-    margin-right: auto;
     padding: 20px;
+    
+    /* 3D-effect properties; must be coupled with JavaScript to flip it around. */
+    opacity: 0.0;
+    transform: rotate3d(0, 1, 0, 180deg);
+    transition-property: all;
+    transition-duration: 0.5s;
+    -moz-transform: rotate3d(0, 1, 0, 180deg);
+    -moz-transition-property: all;
+    -moz-transition-duration: 1s;
+    -webkit-transform: rotate3d(0, 1, 0, 180deg);
+    -webkit-transition-property: all;
+    -webkit-transition-duration: 1s;
+}
+
+.back-panel {
+    background-color: black;
+    position: absolute;
 }
 
 .inner-panel {

@@ -1,29 +1,29 @@
-#main.panel.wrapper
-  h1 QuotentialForGreatness
-  #main-inner-panel.inner-panel
-    .right-align
-      h3 Enter in your status below. Choose a modification if ya likes.
-      div Character Count: 
-       span#character-count 0
-      #posting-section
-        textarea#status
-    div#filters
-      input(type="checkbox", value="filterYell")#yell-checkbox
-      label(for="yell-checkbox") &nbsp;YELL IT!
-      span .  .  .
-      input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
-      label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
-      span .  .  .
-      input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
-      label(for="noctothorpe-checkbox") &nbsp;Noctothorpe
-    #post-this.panel.hip-button.hover-button Post This
-    div#post-footer
-      span
-        a(href="/profile") See your profile
-      span
-        a(href="/") Logout
+.wrapper
+    #main.panel
+      h1 QuotentialForGreatness
+      #main-inner-panel.inner-panel
+        .right-align
+          h3 Enter in your status below. Choose a modification if ya likes.
+          div Character Count: 
+           span#character-count 0
+          #posting-section
+            textarea#status
+        div#filters
+          input(type="checkbox", value="filterYell")#yell-checkbox
+          label(for="yell-checkbox") &nbsp;YELL IT!
+          span .  .  .
+          input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
+          label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
+          span .  .  .
+          input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+          label(for="noctothorpe-checkbox") &nbsp;Noctothorpe
+        #post-this.panel.hip-button.hover-button Post This
+        div#post-footer
+          span
+            a(href="/profile") See your profile
+          span
+            a(href="/") Logout
 #error-alert.panel
   #error-message
   #error-exit.error-button X
-script(src="http://code.jquery.com/jquery-latest.min.js")
 script(src="../js/action/post-status.js")
