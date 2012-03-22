@@ -8,13 +8,11 @@
       #posting-section
         textarea#status
     div
-      span#yell-it.hip-checkbox-set
-        span#yell-it-box.hip-button.hip-checkbox
-        span#yell-it-label.hip-label YELL IT!
+      input(type="checkbox")#yell-checkbox
+      label(for="yell-checkbox") &nbsp;YELL IT!
       span .  .  .  .  .
-      span#trunkify.hip-checkbox-set
-        span#trunkify-box.hip-button.hip-checkbox
-        span#trunkify-label.hip-label trunkify
+      input(type="checkbox")#truncate-to-140-checkbox
+      label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
     #post-this.panel.hip-button.hover-button Post This
     .left-align
       a(href='/profile') See your profile
