@@ -7,11 +7,11 @@
        span#character-count 0
       #posting-section
         textarea#status
-    div
-      input(type="checkbox")#yell-checkbox
+    div#filters
+      input(type="checkbox", value="filterYell")#yell-checkbox
       label(for="yell-checkbox") &nbsp;YELL IT!
       span .  .  .  .  .
-      input(type="checkbox")#truncate-to-140-checkbox
+      input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
       label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
     #post-this.panel.hip-button.hover-button Post This
     .left-align

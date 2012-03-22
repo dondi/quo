@@ -34,21 +34,22 @@ module.exports = function (app, client, everyauth) {
       
       // Contains the list of filters to be used
       filterHash = {
-        "noHash": filterNoHash,
-        "yell": filterYell,
-        "truncate": filterTruncate
+        "filterNoHash": filterNoHash,
+        "filterYell": filterYell,
+        "filterTruncate": filterTruncate
       },
       
       // Runs through the filter list with the given message
       filterExec = function (message, filters) {
+        var result = "";
         filters = filters.split(",");
         for (var f in filters) {
-          var currentFilter = filterHash[f];
+          var currentFilter = filterHash[filters[f]];
           if (currentFilter) {
-            message = currentFilter(message);
+            result = currentFilter(message);
           }
         }
-        return message;
+        return result;
       };
   
   /*
@@ -124,10 +125,10 @@ module.exports = function (app, client, everyauth) {
   
   
   /*
-   * POST /tweet/:message
+   * POST /tweet
    *   [TODO]
    */
-  app.get('/tweet/:message', function (req, res) {
+  app.post('/tweet', function (req, res) {
     var accountId = req.session.accountId;
     
     // Get the DB info for the user's access token and secret
@@ -143,11 +144,18 @@ module.exports = function (app, client, everyauth) {
         accessSecret = profile["accountSecret"],
         accessToken = profile["accountToken"],
         
+        // The data object:
+        data = req.body,
+        
         // Fetch the user's Tweet
-        encodedPost = req.params.message,
+        encodedPost = data["message"],
+        filters = data["filters"],
         
         // The signature ensures the HTTPS request has not been altered in transit
         signature = function () {
+          // Implement the filters given by the post
+          encodedPost = filterExec(encodedPost, filters);
+          
           // The parameter string contains all info required by OAuth including the status
           var parameterString = "",
             
