@@ -26,11 +26,11 @@ module.exports = function (app, client) {
             pass = inputs["pass"], // TODO: Should be hashed; can tackle later
             session = req.session;
 
-        // Sanitize the user input before running through DB
+        // Sanitize the user input before running through DB.
         if (sanitizeAuthentication(user) || sanitizeAuthentication(pass)) {
             res.send(false);
         } else {
-            // Perform database check for authentication
+            // Perform database check for authentication.
             client.authenticateCredentials(user, pass, function (result) {
                 if (result) {
                     session.user = user;
@@ -51,7 +51,22 @@ module.exports = function (app, client) {
      *               for viewing this list.
      */
     app.get('/users', function (req, res) {
-        res.send("This service is not yet implemented.", 500);
+        client.query(
+            'SELECT accountName FROM ' + client.ACCOUNTS_TABLE,
+            function (err, results, fields) {
+                // For every result, extract just the accountName into
+                // an array and return that array.
+                var accountNameArray = [],
+                    i,
+                    max = results.length;
+
+                for (i = 0; i < max; i += 1) {
+                    accountNameArray.push(results[i].accountName);
+                }
+
+                res.send(accountNameArray);
+            }
+        );
     });
   
   
