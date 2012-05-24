@@ -1,15 +1,17 @@
 /**
- * pipeline-controller.js
+ * status-service.js
  *
- * Controller responsible for handling the 
- * pipeline functionality of Quo.
+ * Controller responsible for handling the processing of status
+ * updates in Quo.
  */
-
-module.exports = function (app, client, everyauth) {
+module.exports = function (app, client) {
   var https = require('https'),
       sechash = require('sechash'),
       crypto = require('crypto'),
       
+      // TODO This is duplicated in function-service.js.  This has to be pulled
+      //      out and unified into a shared native function library.
+
       // Message filter to remove hash tags
       filterNoHash = function (message) {
         var rawMessage = message.split(" "),
@@ -50,64 +52,7 @@ module.exports = function (app, client, everyauth) {
         }
         return message;
       };
-  
-  /*
-   * GET /pipelines
-   *   [TODO]
-   */
-  app.get('/pipelines', function (req, res) {
-    // Check if a query was made on the get
-    if (!req.query.username) {
-      res.render('index', {
-        layout: true
-      });
-    
-    /*
-     * GET /pipelines?user={username}
-     *   [TODO]
-     */
-    } else {
-      
-    }
-  });
-  
-  
-  /*
-   * GET /pipelines/:id
-   *   [TODO]
-   */
-  app.get('/pipelines/:id', function (req, res) {
-    res.render('index', {
-      layout: true
-    });
-  });
-  
-  
-    /*
-     * GET /functions?q={search term}
-     *   [TODO put the functions in the database]
-     */
-    app.get('/functions', function (req, res) {
-        var key, response = [];
 
-        for (key in filterHash) {
-            // Check if a query was made on the get.
-            if (!req.query.q || key.indexOf(req.query.q) !== -1) {
-                response.push(key);
-            }
-        }
-
-        res.send(response);
-    });
-
-    /*
-     * GET /functions/:id
-     *   [TODO put the functions in the database]
-     */
-    app.get('/functions/:id', function (req, res) {
-        res.send(filterHash[req.params.id].toString());
-    });
-  
   /*
    * POST /status
    */

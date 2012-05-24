@@ -133,8 +133,11 @@ app.configure('production', function () {
  *
  */
 
-require('./controllers/account-controller.js')(app, client, everyauth);
-require('./controllers/pipeline-controller.js')(app, client, everyauth);
+require('./controllers/user-service.js')(app, client);
+require('./controllers/pipeline-service.js')(app, client);
+require('./controllers/function-service.js')(app, client);
+require('./controllers/status-service.js')(app, client);
+require('./controllers/webapp.js')(app, client);
 
 /*
  *
