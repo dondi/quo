@@ -30,7 +30,7 @@ module.exports = function (app, client) {
      *  GET /profile
      *  renders the profile screen
      */
-    app.get('/profile', function (req, res) {
+    app.get('/profile/:username', function (req, res) {
 	    res.render('profile', {
             layout: true
         });

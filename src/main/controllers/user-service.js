@@ -44,7 +44,6 @@ module.exports = function (app, client) {
   
     /*
      * GET /users
-     *   [TODO]
      *
      * Per REST, this URI should return the collection of all users in the
      * system.  TODO Decide on the credentials, if any, that are necessary
@@ -72,7 +71,6 @@ module.exports = function (app, client) {
   
     /*
      * GET /users/:username
-     *   [TODO]
      *
      * This URI returns a JSON representation of the user with the given
      * username.
@@ -98,4 +96,21 @@ module.exports = function (app, client) {
         );
     });
   
+    /*
+     * PUT /users/:username
+     *
+     * This URI replaces the user information in the database with the
+     * corresponding data from the request payload.
+     */
+    app.put('/users/:username', function (req, res) {
+        client.query(
+            'UPDATE ' + client.ACCOUNTS_TABLE + ' SET email = ? WHERE accountName = ?',
+            [ req.body['email'], req.params.username ],
+            function (err, results) {
+                // TODO Take care of potential errors.
+                res.send(204);
+            }
+        );
+    });
+
 }
