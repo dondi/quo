@@ -53,7 +53,7 @@ module.exports = function (app, client) {
     app.get('/users', function (req, res) {
         client.query(
             'SELECT accountName FROM ' + client.ACCOUNTS_TABLE,
-            function (err, results, fields) {
+            function (err, results) {
                 // For every result, extract just the accountName into
                 // an array and return that array.
                 var accountNameArray = [],
@@ -78,7 +78,14 @@ module.exports = function (app, client) {
      * username.
      */
     app.get('/users/:username', function (req, res) {
-        res.send("This service is not yet implemented.", 500);
+        client.query(
+            'SELECT accountId, accountName, email FROM ' + client.ACCOUNTS_TABLE +
+                ' WHERE accountName = ?',
+            [ req.params.username ],
+            function (err, results) {
+                req.send(results);
+            }
+        );
     });
   
 }
