@@ -83,7 +83,17 @@ module.exports = function (app, client) {
                 ' WHERE accountName = ?',
             [ req.params.username ],
             function (err, results) {
-                req.send(results);
+                if (results.length) {
+                    if (results.length === 1) {
+                        res.send(results[0]);
+                    } else {
+                        // This should never happen under normal circumstances, but if
+                        // it does, we want to know about it.
+                        res.send('More than one user found', 500);
+                    }
+                } else {
+                    res.send('User ' + req.params.username + ' not found', 404);
+                }
             }
         );
     });
