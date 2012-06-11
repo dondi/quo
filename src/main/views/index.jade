@@ -1,15 +1,16 @@
-#login.panel.wrapper
-  h1 WelcomeToQuo
-  #login-inner-panel.inner-panel
-    h2 .login
-    #login-err Username / Password combo not found!
-    div
-      label(for="username") username
-    div
-      input#username(type="text", name="username")
-    div
-      label(for="password") password
-    div
-      input#password(type="password", name="password")
-    #login-button.panel.hip-button.hover-button login
+div.container
+  #login.hero-unit
+    h1 Welcome To Quo
+    #login-inner-panel
+      h2 .login
+      div
+        label(for="username") username
+      div
+        input#username(type="text", name="username")
+      div
+        label(for="password") password
+      div
+        input#password(type="password", name="password")
+      a#login-button.btn.btn-primary.btn-large login
+      #login-err(style="display:none;") Username / Password combo not found!
 script(type="text/javascript", src="../js/display/login-display.js")
