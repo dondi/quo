@@ -1,29 +1,22 @@
-.wrapper
-    #main.panel
-      h1 QuotentialForGreatness
-      #main-inner-panel.inner-panel
-        .right-align
-          h3 Enter in your status below. Choose a modification if ya likes.
-          div Character Count: 
-           span#character-count 0
-          #posting-section
-            textarea#status
-        div#filters
-          input(type="checkbox", value="filterYell")#yell-checkbox
-          label(for="yell-checkbox") &nbsp;YELL IT!
-          span .  .  .
-          input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
-          label(for="truncate-to-140-checkbox") &nbsp;Truncate to 140
-          span .  .  .
-          input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
-          label(for="noctothorpe-checkbox") &nbsp;Noctothorpe
-        #post-this.panel.hip-button.hover-button Post This
-        div#post-footer
-          span
-            a(href="/profile") See your profile
-          span
-            a(href="/") Logout
-#error-alert.panel
-  #error-message
-  #error-exit.error-button X
+div.container
+  #main.hero-unit
+    h1 QuotentialForGreatness
+    h3 Enter in your status below. Choose a modification if ya likes.
+    div Character Count: 
+      span#character-count 0
+    #posting-section
+      textarea#status
+    div#filters
+      input(type="checkbox", value="filterYell")#yell-checkbox 
+      label(for="yell-checkbox") YELL IT!
+      input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
+      label(for="truncate-to-140-checkbox") Truncate to 140
+      input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+      label(for="noctothorpe-checkbox") Noctothorpe
+    a#post-this.btn.btn-primary.btn-large Post This
+    div#post-footer
+      span
+        a(href="/profile") See your profile
+      span
+        a(href="/") Logout
 script(src="../js/action/post-status.js")
