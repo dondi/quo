@@ -1,64 +1,63 @@
 /**
  * app.js
  *
- * Server configuration file that runs the web app
+ * Server configuration file that runs the web app.
  */
+var express = require("express"),
+    everyauth = require("everyauth"),
+    mysql = require("mysql"),
 
-var express = require('express'),
-    
-    everyauth = require('everyauth'),
-    
-    mysql = require('mysql'),
-    
     client = mysql.createClient({
-      ACCOUNTS_TABLE : "quo_accounts",
-      TWIT_TABLE : "quo_twit",
-      host : process.env.QUO_DB_SERVER,
-      database : "quo"
+        ACCOUNTS_TABLE: "quo_accounts",
+        TWIT_TABLE: "quo_twit",
+        host: process.env.QUO_DB_SERVER,
+        database: "quo"
     }),
-    
-    errors = "";
-    
+
+    errors = "",
+
+    // To be initialized after configuration finishes.
+    app;
+
 /*
  *
  *  **** CONFIGURATION ****
  *
  */
 
-// Check that the proper credentials have been set, otherwise, do not mess with database stuff
+// Check that the proper credentials have been set; otherwise, do not mess with database stuff.
 if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
-  client.user = process.env.QUO_DB_USER;
-  client.password = process.env.QUO_DB_PASS;
-  require('./conf/db-config.js')(client);
+    client.user = process.env.QUO_DB_USER;
+    client.password = process.env.QUO_DB_PASS;
+    require("./conf/db-config.js")(client);
 } else {
-  errors += "\n[X] Database user and/or password not found in environment.\n" +
+    errors += "\n[X] Database user and/or password not found in environment.\n" +
             "[X] No database will be available to this process.";
 }
 
-// Everyauth configs
+// Everyauth configs.
 if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
-  everyauth
-    .twitter
-      .consumerKey(process.env.QUO_TWIT_KEY)
-      .consumerSecret(process.env.QUO_TWIT_SECRET)
-      .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-        // TODO: Modularize the credential fetch
-        var profile = JSON.stringify({
-          accountToken: accessToken,
-          accountSecret: accessSecret
-        });
-        
-        client.getAccountId(sess.user, function (id) {
-          client.updateMediaProfile(id, profile, client.TWIT_TABLE, function() {
-            console.log("[i] Media profile parsed for " + sess.user);
-          });
-        });
-        return twitUser;
-      })
-      .redirectPath("/main");
+    everyauth.twitter
+        .consumerKey(process.env.QUO_TWIT_KEY)
+        .consumerSecret(process.env.QUO_TWIT_SECRET)
+        .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+            // TODO: Modularize the credential fetch
+            var profile = JSON.stringify({
+                    accountToken: accessToken,
+                    accountSecret: accessSecret
+                });
+
+            client.getAccountId(sess.user, function (id) {
+                client.updateMediaProfile(id, profile, client.TWIT_TABLE, function () {
+                    console.log("[i] Media profile parsed for " + sess.user);
+                });
+            });
+
+            return twitUser;
+        })
+        .redirectPath("/main");
   /*
-  everyauth
-    .facebook
+  everyauth.facebook
       .appId('YOUR APP ID HERE')
       .appSecret('YOUR APP SECRET HERE')
       .handleAuthCallbackError( function (req, res) {
@@ -75,24 +74,23 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
       .redirectPath('/main');
   */
 } else {
-  errors += "\n[X] Twitter consumer credentials not found in environment.\n" +
+    errors += "\n[X] Twitter consumer credentials not found in environment.\n" +
             "[X] There will be no Twitter connectivity in the process."
 }
     
-// Report any configuration errors
+// Report any configuration errors.
 console.error(errors || "\n[!] Configuration successful.");
 
-var app = module.exports = express.createServer(
-      express.bodyParser(),
-      express.static(__dirname + '/public'),
-      express.cookieParser(),
-      express.methodOverride(),
-      express.session({
-        secret: 'badonka donk'
-      }),
-      everyauth.middleware()
-    );
-
+app = module.exports = express.createServer(
+    express.bodyParser(),
+    express.static(__dirname + "/public"),
+    express.cookieParser(),
+    express.methodOverride(),
+    express.session({
+        secret: "badonka donk"
+    }),
+    everyauth.middleware()
+);
 
 /*
  *
@@ -101,29 +99,29 @@ var app = module.exports = express.createServer(
  */
 
 app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set("view options", {
-    layout: false
-  });
-  app.register('.html', {
-    compile: function (str, options) {
-      return function (locals) {
-        return str;
-      };
-    }
-  });
+    app.set("views", __dirname + "/views");
+    app.set("view engine", "jade");
+    app.set("view options", {
+        layout: false
+    });
+    app.register(".html", {
+        compile: function (str, options) {
+            return function (locals) {
+                return str;
+            };
+        }
+    });
 });
 
-app.configure('development', function () {
-  app.use(express.errorHandler({
-    dumpExceptions: true,
-    showStack: true
-  }));
+app.configure("development", function () {
+    app.use(express.errorHandler({
+        dumpExceptions: true,
+        showStack: true
+    }));
 });
 
-app.configure('production', function () {
-  app.use(express.errorHandler());
+app.configure("production", function () {
+    app.use(express.errorHandler());
 });
 
 
@@ -133,11 +131,14 @@ app.configure('production', function () {
  *
  */
 
-require('./controllers/user-service.js')(app, client);
-require('./controllers/pipeline-service.js')(app, client);
-require('./controllers/function-service.js')(app, client);
-require('./controllers/status-service.js')(app, client);
-require('./controllers/webapp.js')(app, client);
+require("./controllers/user-service.js")(app, client);
+require("./controllers/pipeline-service.js")(app, client);
+require("./controllers/function-service.js")(app, client);
+
+// status-service.js has to strictly appear after function-service.js because
+// it relies on objects that function-service.js defines.
+require("./controllers/status-service.js")(app, client);
+require("./controllers/webapp.js")(app, client);
 
 /*
  *
@@ -146,4 +147,8 @@ require('./controllers/webapp.js')(app, client);
  */
 
 app.listen(4000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log(
+    "Express server listening on port %d in %s mode",
+    app.address().port,
+    app.settings.env
+);
