@@ -5,15 +5,14 @@
  */
 var express = require("express"),
     everyauth = require("everyauth"),
-    mysql = require("mysql"),
 
-    client = mysql.createClient({
-        ACCOUNTS_TABLE: "quo_accounts",
-        TWIT_TABLE: "quo_twit",
-        host: process.env.QUO_DB_SERVER,
-        database: "quo"
-    }),
+    // "Scratch" object for holding configuration script results.
+    configurationResult,
 
+    // To be initialized upon database configuration.
+    database,
+
+    // Cumulative holder of error messages (just a plain string).
     errors = "",
 
     // To be initialized after configuration finishes.
@@ -24,16 +23,14 @@ var express = require("express"),
  *  **** CONFIGURATION ****
  *
  */
+ 
+// Set up the database client and data access objects.
+configurationResult = require("./conf/db-config.js")(require("mysql"));
+database = configurationResult.database;
+errors += (configurationResult.errors || "");
 
-// Check that the proper credentials have been set; otherwise, do not mess with database stuff.
-if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
-    client.user = process.env.QUO_DB_USER;
-    client.password = process.env.QUO_DB_PASS;
-    require("./conf/db-config.js")(client);
-} else {
-    errors += "\n[X] Database user and/or password not found in environment.\n" +
-            "[X] No database will be available to this process.";
-}
+// Set up the available destinations.
+require("./conf/destination-config.js");
 
 // Everyauth configs.
 if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
@@ -47,8 +44,8 @@ if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
                     accountSecret: accessSecret
                 });
 
-            client.getAccountId(sess.user, function (id) {
-                client.updateMediaProfile(id, profile, client.TWIT_TABLE, function () {
+            database.getAccountId(sess.user, function (id) {
+                database.updateMediaProfile(id, profile, database.TWIT_TABLE, function () {
                     console.log("[i] Media profile parsed for " + sess.user);
                 });
             });
@@ -131,14 +128,14 @@ app.configure("production", function () {
  *
  */
 
-require("./controllers/user-service.js")(app, client);
-require("./controllers/pipeline-service.js")(app, client);
-require("./controllers/function-service.js")(app, client);
+require("./controllers/user-service.js")(app, database);
+require("./controllers/pipeline-service.js")(app, database);
+require("./controllers/function-service.js")(app, database);
 
 // status-service.js has to strictly appear after function-service.js because
 // it relies on objects that function-service.js defines.
-require("./controllers/status-service.js")(app, client);
-require("./controllers/webapp.js")(app, client);
+require("./controllers/status-service.js")(app, database);
+require("./controllers/webapp.js")(app, database);
 
 /*
  *
