@@ -33,6 +33,7 @@ errors += (configurationResult.errors || "");
 require("./conf/destination-config.js");
 
 // Everyauth configs.
+// TODO These should move to appropriate destination configuration files.
 if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
     everyauth.twitter
         .consumerKey(process.env.QUO_TWIT_KEY)
