@@ -33,6 +33,8 @@ module.exports = function (app, database) {
             // Perform database check for authentication.
             database.authenticateCredentials(user, pass, function (result) {
                 if (result) {
+                    // The presence of the session.user property indicates that a user
+                    // is currently logged in.
                     session.user = user;
                     session.accountId = result[0].accountId;
                 }

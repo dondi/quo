@@ -60,15 +60,4 @@ module.exports = function (app, database) {
         }
     });
 
-    /*
-     * GET /bye
-     *   Logs out the current user then redirects to the login page
-     */
-    // TODO /logout seems to already be taken.  Why?
-    app.get("/bye", function (req, res) {
-        req.session.destroy(function () {
-            res.redirect("/");
-        });
-    });
-
 };

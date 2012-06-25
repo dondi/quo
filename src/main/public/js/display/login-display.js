@@ -22,6 +22,8 @@ $(function () {
 
             success: function (result) {
                 if (result) {
+                    // TODO This needs to be integrated eventually with the /destinations
+                    //      that are available to a user.
                     window.location = "./auth/twitter";
                 } else {
                     $("#login-err")
