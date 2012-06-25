@@ -12,6 +12,9 @@ var express = require("express"),
     // To be initialized upon database configuration.
     database,
 
+    // To be initialized upon destination configuration.
+    destinations,
+
     // Cumulative holder of error messages (just a plain string).
     errors = "",
 
@@ -30,55 +33,14 @@ database = configurationResult.database;
 errors += (configurationResult.errors || "");
 
 // Set up the available destinations.
-require("./conf/destination-config.js");
+configurationResult = require("./conf/destination-config.js")(everyauth);
+destinations = configurationResult.destinations;
+errors += (configurationResult.errors || "");
 
-// Everyauth configs.
-// TODO These should move to appropriate destination configuration files.
-if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
-    everyauth.twitter
-        .consumerKey(process.env.QUO_TWIT_KEY)
-        .consumerSecret(process.env.QUO_TWIT_SECRET)
-        .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
-            // TODO: Modularize the credential fetch
-            var profile = JSON.stringify({
-                    accountToken: accessToken,
-                    accountSecret: accessSecret
-                });
-
-            database.getAccountId(sess.user, function (id) {
-                database.updateMediaProfile(id, profile, database.TWIT_TABLE, function () {
-                    console.log("[i] Media profile parsed for " + sess.user);
-                });
-            });
-
-            return twitUser;
-        })
-        .redirectPath("/main");
-  /*
-  everyauth.facebook
-      .appId('YOUR APP ID HERE')
-      .appSecret('YOUR APP SECRET HERE')
-      .handleAuthCallbackError( function (req, res) {
-        // If a user denies your app, Facebook will redirect the user to
-        // /auth/facebook/callback?error_reason=user_denied&error=access_denied&error_description=The+user+denied+your+request.
-        // This configurable route handler defines how you want to respond to
-        // that.
-        // If you do not configure this, everyauth renders a default fallback
-        // view notifying the user that their authentication failed and why.
-      })
-      .findOrCreateUser( function (session, accessToken, accessTokExtra, fbUserMetadata) {
-        // find or create user logic goes here
-      })
-      .redirectPath('/main');
-  */
-} else {
-    errors += "\n[X] Twitter consumer credentials not found in environment.\n" +
-            "[X] There will be no Twitter connectivity in the process."
-}
-    
 // Report any configuration errors.
 console.error(errors || "\n[!] Configuration successful.");
 
+// Initialize the app.
 app = module.exports = express.createServer(
     express.bodyParser(),
     express.static(__dirname + "/public"),
@@ -89,6 +51,8 @@ app = module.exports = express.createServer(
     }),
     everyauth.middleware()
 );
+
+app.DESTINATIONS = destinations;
 
 /*
  *
