@@ -86,7 +86,6 @@ app.configure("production", function () {
     app.use(express.errorHandler());
 });
 
-
 /*
  *
  *  **** CONTROLLERS ****
@@ -95,6 +94,7 @@ app.configure("production", function () {
 
 require("./controllers/user-service.js")(app, database);
 require("./controllers/pipeline-service.js")(app, database);
+require("./controllers/destination-service.js")(app, database);
 require("./controllers/function-service.js")(app, database);
 
 // status-service.js has to strictly appear after function-service.js because
