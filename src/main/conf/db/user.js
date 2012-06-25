@@ -94,8 +94,7 @@ module.exports = function (database) {
             [id],
 
             function (err, results, fields) {
-                var result = (results && results.length) ? results[0].profile : null;
-                callback(result);
+                callback((results && results.length) ? results[0].profile : null);
             }
         );
     };
