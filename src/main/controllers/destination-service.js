@@ -14,7 +14,15 @@ module.exports = function (app, database) {
      * GET /destinations
      */
     app.get("/destinations", function (req, res) {
-        res.send(app.DESTINATIONS);
+        var result = [], destination;
+
+        for (destination in app.DESTINATIONS) {
+            if (app.DESTINATIONS.hasOwnProperty(destination)) {
+                result.push(destination);
+            }
+        }
+
+        res.send(result);
     });
   
 };

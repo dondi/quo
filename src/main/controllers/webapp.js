@@ -4,7 +4,7 @@
  * Controller responsible for handling the Quo webapp itself
  * (i.e., any URI that returns a web page).
  */
-module.exports = function (app, client) {
+module.exports = function (app, database) {
 
     /*
      * GET /

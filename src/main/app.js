@@ -52,6 +52,7 @@ app = module.exports = express.createServer(
     everyauth.middleware()
 );
 
+// Set the available destinations.
 app.DESTINATIONS = destinations;
 
 /*

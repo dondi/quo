@@ -4,7 +4,7 @@
  * Controller responsible for handling the 
  * pipeline service functionality of Quo.
  */
-module.exports = function (app, client) {
+module.exports = function (app, database) {
 
   /*
    * GET /pipelines

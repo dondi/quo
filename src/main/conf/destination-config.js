@@ -4,8 +4,9 @@
  * Configures the available status post destinations for Quo.
  */
 module.exports = function (everyauth) {
-    // Initialize the array of destinations.
-    this.destinations = [];
+    // Initialize the collection of destinations and their corresponding
+    // status-posting functions.
+    this.destinations = {};
 
     // Initialize the error string.
     this.errors = "";

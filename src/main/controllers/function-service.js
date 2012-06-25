@@ -7,7 +7,7 @@
  * In Quo, "functions" are JavaScript functions that accept an input status
  * string, transforms that string somehow, then returns the result.
  */
-module.exports = function (app, client) {
+module.exports = function (app, database) {
     var // These filters are "built-in;" i.e., they are stored in memory and not
         // in the database.
 

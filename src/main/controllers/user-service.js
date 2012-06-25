@@ -4,7 +4,7 @@
  * Controller responsible for handling the user account and
  * administrative functions of Quo.
  */
-module.exports = function (app, client) {
+module.exports = function (app, database) {
 
     // Imports
     var sanitize = require('validator').sanitize,
@@ -31,7 +31,7 @@ module.exports = function (app, client) {
             res.send(false);
         } else {
             // Perform database check for authentication.
-            client.authenticateCredentials(user, pass, function (result) {
+            database.authenticateCredentials(user, pass, function (result) {
                 if (result) {
                     session.user = user;
                     session.accountId = result[0].accountId;
@@ -49,8 +49,8 @@ module.exports = function (app, client) {
      *               for viewing this list.
      */
     app.get('/users', function (req, res) {
-        client.query(
-            'SELECT accountName FROM ' + client.ACCOUNTS_TABLE,
+        database.query(
+            'SELECT accountName FROM ' + database.ACCOUNTS_TABLE,
             function (err, results) {
                 // For every result, extract just the accountName into
                 // an array and return that array.
@@ -74,8 +74,8 @@ module.exports = function (app, client) {
      * username.
      */
     app.get('/users/:username', function (req, res) {
-        client.query(
-            'SELECT accountId, accountName, email FROM ' + client.ACCOUNTS_TABLE +
+        database.query(
+            'SELECT accountId, accountName, email FROM ' + database.ACCOUNTS_TABLE +
                 ' WHERE accountName = ?',
             [ req.params.username ],
             function (err, results) {
@@ -101,8 +101,8 @@ module.exports = function (app, client) {
      * corresponding data from the request payload.
      */
     app.put('/users/:username', function (req, res) {
-        client.query(
-            'UPDATE ' + client.ACCOUNTS_TABLE + ' SET email = ? WHERE accountName = ?',
+        database.query(
+            'UPDATE ' + database.ACCOUNTS_TABLE + ' SET email = ? WHERE accountName = ?',
             [ req.body['email'], req.params.username ],
             function (err, results) {
                 // TODO Take care of potential errors.
