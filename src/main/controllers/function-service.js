@@ -70,4 +70,4 @@ module.exports = function (app, client) {
         res.send(app.BUILT_IN_FILTERS[req.params.id].toString());
     });
   
-}
+};

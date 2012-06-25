@@ -6,13 +6,13 @@
  */
 module.exports = function (app, client) {
 
-  // Imports
-  var sanitize = require('validator').sanitize,
+    // Imports
+    var sanitize = require('validator').sanitize,
 
-    // Helper function to sanitize pre-DB layer user input
-    sanitizeAuthentication = function (userInput) {
-      return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
-    };
+        // Helper function to sanitize pre-DB layer user input
+        sanitizeAuthentication = function (userInput) {
+          return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+        };
 
     /*
      * POST /
@@ -41,7 +41,6 @@ module.exports = function (app, client) {
         }
     });
   
-  
     /*
      * GET /users
      *
@@ -67,7 +66,6 @@ module.exports = function (app, client) {
             }
         );
     });
-  
   
     /*
      * GET /users/:username
@@ -113,4 +111,4 @@ module.exports = function (app, client) {
         );
     });
 
-}
+};

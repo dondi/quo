@@ -29,4 +29,4 @@ module.exports = function (app, client) {
         res.send("This service is not yet implemented.", 500);
   });
   
-}
+};
