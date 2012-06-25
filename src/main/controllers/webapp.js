@@ -6,11 +6,15 @@
  */
 module.exports = function (app, database) {
 
-    var loginIntercept = function (req, res) {
+    var loginIntercept = function (req, res, next) {
             // For now, just bail with forbidden.
             // TODO Redirect to a login page instead, and let the login go
             //      back here.
-            res.send(403);
+            if (req.session.user) {
+                next();
+            } else {
+                res.send(403);
+            }
         };
 
     /*
@@ -27,39 +31,32 @@ module.exports = function (app, database) {
      * GET /main
      *   Renders the main screen
      */
-    app.get("/main", function (req, res) {
-        if (req.session.user) {
-            res.render("main", {
-                layout: true
-            });
-        } else {
-            loginIntercept(req, res);
-        }
+    app.get("/main", loginIntercept, function (req, res) {
+        res.render("main", {
+            layout: true
+        });
     });
 
     /*
      * GET /profile
      *   Redirects to the profile page of the current user
      */
-    app.get("/profile", function (req, res) {
-        if (req.session.user) {
-            res.redirect("/profile/" + req.session.user);
-        } else {
-            loginIntercept(req, res);
-        }
+    app.get("/profile", loginIntercept, function (req, res) {
+        res.redirect("/profile/" + req.session.user);
     });
 
     /*
      * GET /profile/:username
      *   Renders the profile page for the given user
      */
-    app.get("/profile/:username", function (req, res) {
+    app.get("/profile/:username", loginIntercept, function (req, res) {
         if (req.session.user === req.params.username) {
             res.render('profile', {
                 layout: true
             });
         } else {
-            loginIntercept(req, res);
+            // TODO Handle user attempts to access another user differently.
+            res.send(403);
         }
     });
 
@@ -67,6 +64,7 @@ module.exports = function (app, database) {
      * GET /bye
      *   Logs out the current user then redirects to the login page
      */
+    // TODO /logout seems to already be taken.  Why?
     app.get("/bye", function (req, res) {
         req.session.destroy(function () {
             res.redirect("/");
