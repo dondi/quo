@@ -21,8 +21,8 @@ module.exports = function (app, database) {
      * GET /
      *   Renders the login index
      */
-    app.get('/', function (req, res) {
-        res.render('index', {
+    app.get("/", function (req, res) {
+        res.render("index", {
             layout: true
         });
     });
@@ -42,7 +42,7 @@ module.exports = function (app, database) {
      *   Redirects to the profile page of the current user
      */
     app.get("/profile", loginIntercept, function (req, res) {
-        res.redirect("/profile/" + req.session.user);
+        res.redirect("/profile/" + req.session.user.name);
     });
 
     /*
@@ -50,8 +50,8 @@ module.exports = function (app, database) {
      *   Renders the profile page for the given user
      */
     app.get("/profile/:username", loginIntercept, function (req, res) {
-        if (req.session.user === req.params.username) {
-            res.render('profile', {
+        if (req.session.user.name === req.params.username) {
+            res.render("profile", {
                 layout: true
             });
         } else {

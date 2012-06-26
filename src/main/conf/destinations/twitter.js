@@ -22,14 +22,19 @@ module.exports = function (everyauth, configurationResult) {
                         accountSecret: accessSecret
                     });
 
-                database.getAccountId(session.user, function (userId) {
-                    database.updateMediaProfile(
-                        userId, DESTINATION, twitUser.id, profile, database.USER_DESTINATION_TABLE,
-                        function () {
-                            console.log("[i] Media profile parsed for " + session.user);
-                        }
-                    );
-                });
+                if (session.user) {
+                    database.getUserIdByName(session.user.name, function (userId) {
+                        database.createOrUpdateUserDestinationProfile(
+                            userId, DESTINATION, twitUser.id, profile,
+                            function () {
+                                console.log("[i] Media profile parsed for " + session.user.name);
+                            }
+                        );
+                    });
+                } else {
+                    // This should never happen, but...
+                    throw "Session has no user!";
+                }
 
                 return twitUser;
             })
@@ -37,10 +42,10 @@ module.exports = function (everyauth, configurationResult) {
 
         // Upon success, we add twitter to the destinations collection.
         configurationResult.destinations[DESTINATION] = function (status, req, res, database) {
-            var accountId = req.session.accountId;
+            var userId = req.session.user ? req.session.user.id : null;
 
             // Get the DB info for the user's access token and secret.
-            database.getMediaProfile(accountId, DESTINATION, database.USER_DESTINATION_TABLE, function (profile) {
+            database.getUserDestinationProfileByUserId(userId, DESTINATION, function (profile) {
                 profile = JSON.parse(profile);
 
                 // Generate a time stamp based on GMT (Universal Time).

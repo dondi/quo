@@ -8,17 +8,17 @@
  */
 module.exports = function (database) {
     // Assign some useful public values.
-    database.ACCOUNTS_TABLE = "quo_accounts";
+    database.USER_TABLE = "quo_user";
     database.USER_DESTINATION_TABLE = "quo_user_destination";
 
     // Set up the accounts table.
     database.query(
-        "CREATE TABLE IF NOT EXISTS " + database.ACCOUNTS_TABLE +
-                "(accountId INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                "accountName VARCHAR(255) NOT NULL, " +
+        "CREATE TABLE IF NOT EXISTS " + database.USER_TABLE +
+                "(id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
+                "name VARCHAR(255) NOT NULL, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "email VARCHAR(255) NOT NULL, " +
-                "PRIMARY KEY (accountId))"
+                "PRIMARY KEY (id))"
     );
 
     // Create the user destination table.
@@ -28,34 +28,33 @@ module.exports = function (database) {
                 "destination TEXT NOT NULL, " +
                 "destinationId VARCHAR(255) NOT NULL, " +
                 "profile TEXT NOT NULL, " +
-                "FOREIGN KEY (userId) REFERENCES " + database.ACCOUNTS_TABLE + "(accountId), " +
+                "FOREIGN KEY (userId) REFERENCES " + database.USER_TABLE + "(id), " +
                 "PRIMARY KEY (userId, destinationId))"
     );
 
     // Asynchronously executes the callback with the account id, if
     // it exists, -1 otherwise.
-    database.getAccountId = function (account, callback) {
+    database.getUserIdByName = function (name, callback) {
         database.query(
-            "SELECT accountName, accountId FROM " + database.ACCOUNTS_TABLE + 
-                    " WHERE accountName = ?",
+            "SELECT id FROM " + database.USER_TABLE + 
+                    " WHERE name = ?",
 
-            [account],
+            [name],
 
             function (err, results, fields) {
-                var result = (results && results.length) ? results[0].accountId : -1;
-                callback(result);
+                callback((results && results.length) ? results[0].id : -1);
             }
         );
     };
 
     // Asynchronously checks the accounts table for the given credentials and
     // returns a boolean denoting a match 
-    database.authenticateCredentials = function (account, password, callback) {
+    database.authenticateCredentials = function (name, password, callback) {
         database.query(
-            "SELECT accountName, accountId FROM " + database.ACCOUNTS_TABLE + 
-                    " WHERE accountName=? and password = ?",
+            "SELECT id, name, email FROM " + database.USER_TABLE + 
+                    " WHERE name = ? and password = ?",
 
-            [account, password],
+            [name, password],
 
             function (err, results, fields) {
                 callback(((results && results.length) ? results : null));
@@ -65,12 +64,14 @@ module.exports = function (database) {
 
     // Creates a main user account with given credentials, triggering the callback
     // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
-    database.createAccount = function (user, pass, email, callback) {
-        database.getAccountId(user, function (result) {
+    //
+    // TODO change into createOrUpdateUser
+    database.createUser = function (user, pass, email, callback) {
+        database.getUserIdByName(user, function (result) {
             if (result === -1) {
                 database.query(
-                    "insert into " + database.ACCOUNTS_TABLE + " " +
-                            "set accountName = ?, " +
+                    "INSERT INTO " + database.USER_TABLE + " " +
+                            "SET name = ?, " +
                             "password = ?, " +
                             "email = ?",
 
@@ -87,33 +88,31 @@ module.exports = function (database) {
         });
     };
 
-    // Asynchronously executes the callback with the media Id, if
-    // it exists, -1 otherwise
-    database.findUserByDestinationAndDestinationId = function (destination, destinationId, callback) {
+    // Asynchronously executes the callback with the user destination, if
+    // it exists, null otherwise.
+    database.getUserByDestinationAndDestinationId = function (destination, destinationId, callback) {
         database.query(
-            "SELECT " + database.ACCOUNTS_TABLE + ".* FROM " +
-                    database.ACCOUNTS_TABLE + " INNER JOIN " +
+            "SELECT " + database.USER_TABLE + ".* FROM " +
+                    database.USER_TABLE + " INNER JOIN " +
                     database.USER_DESTINATION_TABLE + " ON (" +
-                    database.ACCOUNTS_TABLE + ".accountId = " +
+                    database.USER_TABLE + ".id = " +
                     database.USER_DESTINATION_TABLE + ".userId) " +
                     "WHERE destination = ? and destinationId = ?",
 
             [destination, destinationId],
 
             function (err, results, fields) {
-                console.log("find called");
-                console.log((results && results.length) ? results[0] : null);
                 callback((results && results.length) ? results[0] : null);
             }
         );
     };
 
-    // Asynchronously executes the callback with the media Id, if
-    // it exists, -1 otherwise
-    database.getMediaProfile = function (userId, destination, media, callback) {
+    // Asynchronously executes the callback with the user destination profile, if
+    // it exists, null otherwise.
+    database.getUserDestinationProfileByUserId = function (userId, destination, callback) {
         database.query(
-            "SELECT userId, profile FROM " + media + " " + // Weird bug; cannot name media table except inline
-                    "WHERE userId = ? and destination = ?",
+            "SELECT userId, profile FROM " + database.USER_DESTINATION_TABLE + " " +
+                    "WHERE userId = ? AND destination = ?",
 
             [userId, destination],
 
@@ -125,12 +124,12 @@ module.exports = function (database) {
 
     // Creates a main user account with given credentials, triggering the callback
     // with the resultant id found for the user (null if new; some profile if update)
-    database.updateMediaProfile = function (userId, destination, destinationId, profile, media, callback) {
-        database.getMediaProfile(userId, destination, media, function (result) {
+    database.createOrUpdateUserDestinationProfile = function (userId, destination, destinationId, profile, callback) {
+        database.getUserDestinationProfileByUserId(userId, destination, function (result) {
             // Construct the query params so they can be changed easily if it"s an add vs update
             var queryConfig = [
-                "insert into " + media + " " + // Weird bug; cannot name media table except inline
-                        "set userId = ?, " +
+                "INSERT INTO " + database.USER_DESTINATION_TABLE + " " +
+                        "SET userId = ?, " +
                         "destination = ?, " +
                         "destinationId = ?, " +
                         "profile = ?",
@@ -145,11 +144,11 @@ module.exports = function (database) {
                 }
             ];
 
-            // If our getMediaProfile returned a profile, it must be an update, not an add.
+            // If our get call returned a profile, it must be an update, not an add.
             if (result) {
-                queryConfig[0] = "update " + media + " " +
-                        "set destinationId = ?, profile = ? " +
-                        "where userId = ? and destination = ?";
+                queryConfig[0] = "UPDATE " + database.USER_DESTINATION_TABLE + " " +
+                        "SET destinationId = ?, profile = ? " +
+                        "WHERE userId = ? AND destination = ?";
                 queryConfig[1] = [destinationId, profile, userId, destination];
             }
 
