@@ -9,7 +9,7 @@
 module.exports = function (database) {
     // Assign some useful public values.
     database.ACCOUNTS_TABLE = "quo_accounts";
-    database.TWIT_TABLE = "quo_twit"; // TODO might need to move?
+    database.USER_DESTINATION_TABLE = "quo_user_destination";
 
     // Set up the accounts table.
     database.query(
@@ -21,12 +21,15 @@ module.exports = function (database) {
                 "PRIMARY KEY (accountId))"
     );
 
-    // Create the twitter accounts table
+    // Create the user destination table.
     database.query(
-        "CREATE TABLE IF NOT EXISTS " + database.TWIT_TABLE +
-                "(accountId INT(11) UNSIGNED NOT NULL, " +
+        "CREATE TABLE IF NOT EXISTS " + database.USER_DESTINATION_TABLE +
+                "(userId INT(11) UNSIGNED NOT NULL, " +
+                "destination TEXT NOT NULL, " +
+                "destinationId VARCHAR(255) NOT NULL, " +
                 "profile TEXT NOT NULL, " +
-                "PRIMARY KEY (accountId))"
+                "FOREIGN KEY (userId) REFERENCES " + database.ACCOUNTS_TABLE + "(accountId), " +
+                "PRIMARY KEY (userId, destinationId))"
     );
 
     // Asynchronously executes the callback with the account id, if
@@ -86,12 +89,33 @@ module.exports = function (database) {
 
     // Asynchronously executes the callback with the media Id, if
     // it exists, -1 otherwise
-    database.getMediaProfile = function (id, media, callback) {
+    database.findUserByDestinationAndDestinationId = function (destination, destinationId, callback) {
         database.query(
-            "SELECT accountId, profile FROM " + media + " " + // Weird bug; cannot name media table except inline
-                    "WHERE accountId=?",
+            "SELECT " + database.ACCOUNTS_TABLE + ".* FROM " +
+                    database.ACCOUNTS_TABLE + " INNER JOIN " +
+                    database.USER_DESTINATION_TABLE + " ON (" +
+                    database.ACCOUNTS_TABLE + ".accountId = " +
+                    database.USER_DESTINATION_TABLE + ".userId) " +
+                    "WHERE destination = ? and destinationId = ?",
 
-            [id],
+            [destination, destinationId],
+
+            function (err, results, fields) {
+                console.log("find called");
+                console.log((results && results.length) ? results[0] : null);
+                callback((results && results.length) ? results[0] : null);
+            }
+        );
+    };
+
+    // Asynchronously executes the callback with the media Id, if
+    // it exists, -1 otherwise
+    database.getMediaProfile = function (userId, destination, media, callback) {
+        database.query(
+            "SELECT userId, profile FROM " + media + " " + // Weird bug; cannot name media table except inline
+                    "WHERE userId = ? and destination = ?",
+
+            [userId, destination],
 
             function (err, results, fields) {
                 callback((results && results.length) ? results[0].profile : null);
@@ -101,15 +125,17 @@ module.exports = function (database) {
 
     // Creates a main user account with given credentials, triggering the callback
     // with the resultant id found for the user (null if new; some profile if update)
-    database.updateMediaProfile = function (id, profile, media, callback) {
-        database.getMediaProfile(id, media, function (result) {
+    database.updateMediaProfile = function (userId, destination, destinationId, profile, media, callback) {
+        database.getMediaProfile(userId, destination, media, function (result) {
             // Construct the query params so they can be changed easily if it"s an add vs update
             var queryConfig = [
                 "insert into " + media + " " + // Weird bug; cannot name media table except inline
-                        "set accountId = ?, " +
+                        "set userId = ?, " +
+                        "destination = ?, " +
+                        "destinationId = ?, " +
                         "profile = ?",
 
-                [id, profile],
+                [userId, destination, destinationId, profile],
 
                 function (err, results, fields) {
                     if (err) {
@@ -121,8 +147,10 @@ module.exports = function (database) {
 
             // If our getMediaProfile returned a profile, it must be an update, not an add.
             if (result) {
-                queryConfig[0] = "update " + media + " set profile = ? where accountId = ?";
-                queryConfig[1] = [profile, id];
+                queryConfig[0] = "update " + media + " " +
+                        "set destinationId = ?, profile = ? " +
+                        "where userId = ? and destination = ?";
+                queryConfig[1] = [destinationId, profile, userId, destination];
             }
 
             // Execute the query, whether it was an update or add.

@@ -6,24 +6,29 @@
 module.exports = function (everyauth, configurationResult) {
     var https = require("https"),
         sechash = require("sechash"),
-        crypto = require("crypto");
+        crypto = require("crypto"),
+
+        DESTINATION = "twitter";
 
     // Some modules needed for Twitter posting.
     if (process.env.QUO_TWIT_KEY && process.env.QUO_TWIT_SECRET) {
         everyauth.twitter
             .consumerKey(process.env.QUO_TWIT_KEY)
             .consumerSecret(process.env.QUO_TWIT_SECRET)
-            .findOrCreateUser(function (sess, accessToken, accessSecret, twitUser) {
+            .findOrCreateUser(function (session, accessToken, accessSecret, twitUser) {
                 // TODO: Modularize the credential fetch
                 var profile = JSON.stringify({
                         accountToken: accessToken,
                         accountSecret: accessSecret
                     });
 
-                database.getAccountId(sess.user, function (id) {
-                    database.updateMediaProfile(id, profile, database.TWIT_TABLE, function () {
-                        console.log("[i] Media profile parsed for " + sess.user);
-                    });
+                database.getAccountId(session.user, function (userId) {
+                    database.updateMediaProfile(
+                        userId, DESTINATION, twitUser.id, profile, database.USER_DESTINATION_TABLE,
+                        function () {
+                            console.log("[i] Media profile parsed for " + session.user);
+                        }
+                    );
                 });
 
                 return twitUser;
@@ -31,11 +36,11 @@ module.exports = function (everyauth, configurationResult) {
             .redirectPath("/main");
 
         // Upon success, we add twitter to the destinations collection.
-        configurationResult.destinations.twitter = function (status, req, res, database) {
+        configurationResult.destinations[DESTINATION] = function (status, req, res, database) {
             var accountId = req.session.accountId;
 
             // Get the DB info for the user's access token and secret.
-            database.getMediaProfile(accountId, database.TWIT_TABLE, function (profile) {
+            database.getMediaProfile(accountId, DESTINATION, database.USER_DESTINATION_TABLE, function (profile) {
                 profile = JSON.parse(profile);
 
                 // Generate a time stamp based on GMT (Universal Time).

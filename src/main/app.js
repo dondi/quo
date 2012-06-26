@@ -52,6 +52,9 @@ app = module.exports = express.createServer(
     everyauth.middleware()
 );
 
+// Make everyauth data available to views.
+everyauth.helpExpress(app);
+
 // Set the available destinations.
 app.DESTINATIONS = destinations;
 
