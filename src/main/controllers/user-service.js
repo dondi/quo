@@ -6,12 +6,19 @@
  */
 module.exports = function (app, database) {
 
-    // Imports
+        // Imports.
     var sanitize = require("validator").sanitize,
 
-        // Helper function to sanitize pre-DB layer user input
+        // Helper function to sanitize pre-DB layer user input.
         sanitizeAuthentication = function (userInput) {
-          return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+            return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+        },
+
+        // Helper function for shipping out a created user.
+        sendCreatedUser = function (res, createdUser) {
+            // TODO Is there a way to build a URI in Node/Express?
+            res.header("Location", "/users/" + createdUser.name);
+            res.send(201);
         };
 
     /*
@@ -60,7 +67,7 @@ module.exports = function (app, database) {
                     max = results.length;
 
                 for (i = 0; i < max; i += 1) {
-                    names.push(results[i].names);
+                    names.push(results[i].name);
                 }
 
                 res.send(names);
@@ -68,7 +75,32 @@ module.exports = function (app, database) {
         );
     });
 
-    // TODO POST /users
+    /*
+     * POST /users
+     *
+     * Creates a new user from the given payload.
+     */
+    app.post("/users", function (req, res) {
+        var userToPost = req.body;
+
+        // Make sure that the user does not have an ID.
+        if (userToPost.id) {
+            res.send("User overspecified", 400);
+        } else {
+            // Perform the creation.
+            database.createOrUpdateUser(userToPost,
+                // Send back the created response code, along with the URI of the new user.
+                function (result) {
+                    // TODO Take care of potential errors (currently just logged).
+                    if (result) {
+                        sendCreatedUser(res, result);
+                    } else {
+                        res.send("Creation failed", 400);
+                    }
+                }
+            );
+        }
+    });
 
     /*
      * GET /users/:username
@@ -77,26 +109,14 @@ module.exports = function (app, database) {
      * username.
      */
     app.get("/users/:username", function (req, res) {
-        database.query(
-            "SELECT userId, name, email FROM " + database.USER_TABLE +
-                " WHERE name = ?",
-            [ req.params.username ],
-            function (err, results) {
-                if (results.length) {
-                    if (results.length === 1) {
-                        res.send(results[0]);
-                    } else {
-                        // This should never happen under normal circumstances, but if
-                        // it does, we want to know about it.
-                        res.send("More than one user found", 500);
-                    }
-                } else {
-                    res.send("User " + req.params.username + " not found", 404);
-                }
+        database.getUserByName(req.params.username,
+
+            function (result) {
+                res.send(result || 404);
             }
         );
     });
-  
+
     /*
      * PUT /users/:username
      *
@@ -104,15 +124,24 @@ module.exports = function (app, database) {
      * corresponding data from the request payload.
      */
     app.put("/users/:username", function (req, res) {
-        // TODO convert to the dao method
-        database.query(
-            "UPDATE " + database.USER_TABLE + " SET email = ? WHERE name = ?",
-            [ req.body["email"], req.params.username ],
-            function (err, results) {
-                // TODO Take care of potential errors.
-                res.send(204);
-            }
-        );
+        var userToPut = req.body;
+
+        // First, check that the supplied information is consistent.
+        if (userToPut.name === req.params.username) {
+            database.createOrUpdateUser(userToPut,
+
+                function (result) {
+                    // TODO Take care of potential errors (currently just logged).
+                    if (result) {
+                        sendCreatedUser(res, result);
+                    } else {
+                        res.send(204);
+                    }
+                }
+            );
+        } else {
+            res.send("User inconsistent", 400);
+        }
     });
 
 };

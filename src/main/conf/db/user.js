@@ -15,7 +15,7 @@ module.exports = function (database) {
     database.query(
         "CREATE TABLE IF NOT EXISTS " + database.USER_TABLE +
                 "(id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT, " +
-                "name VARCHAR(255) NOT NULL, " +
+                "name VARCHAR(255) NOT NULL UNIQUE, " +
                 "password VARCHAR(255) NOT NULL, " +
                 "email VARCHAR(255) NOT NULL, " +
                 "PRIMARY KEY (id))"
@@ -32,17 +32,33 @@ module.exports = function (database) {
                 "PRIMARY KEY (userId, destinationId))"
     );
 
-    // Asynchronously executes the callback with the account id, if
-    // it exists, -1 otherwise.
-    database.getUserIdByName = function (name, callback) {
+    // Asynchronously executes the callback with the user, if
+    // it exists, null otherwise.
+    database.getUserByName = function (name, callback) {
         database.query(
-            "SELECT id FROM " + database.USER_TABLE + 
+            "SELECT name, email FROM " + database.USER_TABLE + 
                     " WHERE name = ?",
 
             [name],
 
             function (err, results, fields) {
-                callback((results && results.length) ? results[0].id : -1);
+                callback((results && results.length) ? results[0] : null);
+            }
+        );
+    };
+
+    // Asynchronously executes the callback with the full user, if
+    // it exists, null otherwise.  This includes the password, so should
+    // not be externally accessible.
+    database._getFullUserByName = function (name, callback) {
+        database.query(
+            "SELECT * FROM " + database.USER_TABLE + 
+                    " WHERE name = ?",
+
+            [name],
+
+            function (err, results, fields) {
+                callback((results && results.length) ? results[0] : null);
             }
         );
     };
@@ -64,27 +80,54 @@ module.exports = function (database) {
 
     // Creates a main user account with given credentials, triggering the callback
     // with the resultant id found for the user (-1 if new; id >= 1 otherwise)
-    //
-    // TODO change into createOrUpdateUser
-    database.createUser = function (user, pass, email, callback) {
-        database.getUserIdByName(user, function (result) {
-            if (result === -1) {
-                database.query(
-                    "INSERT INTO " + database.USER_TABLE + " " +
+    database.createOrUpdateUser = function (user, callback) {
+        database._getFullUserByName(user.name, function (result) {
+            // Construct the query params so they can be changed easily if it's a create vs. an update.
+            var queryConfig = [
+                "INSERT INTO " + database.USER_TABLE + " " +
                             "SET name = ?, " +
                             "password = ?, " +
                             "email = ?",
 
-                    [user, pass, email],
+                [user.name, user.password, user.email],
 
-                    function (err, results, fields) {
-                        if (err) {
-                            console.log(err);
-                        }
-                        callback(result);
+                function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
                     }
-                );
+
+                    // For an insertion, we need to return the inserted user.
+                    database.getUserByName(user.name, function (createdUser) {
+                        callback(createdUser);
+                    });
+                }
+            ];
+
+            // If our get call returned a user object, it must be an update, not an add.
+            if (result) {
+                queryConfig[0] = "UPDATE " + database.USER_TABLE + " " +
+                        "SET name = ?, password = ?, email = ? " +
+                        "WHERE id = ?";
+
+                // password is an optional property for the incoming object.
+                queryConfig[1] = [user.name, user.password || result.password, user.email, result.id];
+
+                queryConfig[2] = function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    // A successful update should return no content.
+                    callback(null);
+                };
             }
+
+            // Execute the query, whether it was an update or add.
+            database.query(
+                queryConfig[0],
+                queryConfig[1],
+                queryConfig[2]
+            );
         });
     };
 
@@ -126,7 +169,7 @@ module.exports = function (database) {
     // with the resultant id found for the user (null if new; some profile if update)
     database.createOrUpdateUserDestinationProfile = function (userId, destination, destinationId, profile, callback) {
         database.getUserDestinationProfileByUserId(userId, destination, function (result) {
-            // Construct the query params so they can be changed easily if it"s an add vs update
+            // Construct the query params so they can be changed easily if it's a create vs. an update.
             var queryConfig = [
                 "INSERT INTO " + database.USER_DESTINATION_TABLE + " " +
                         "SET userId = ?, " +
@@ -140,7 +183,15 @@ module.exports = function (database) {
                     if (err) {
                         console.log(err);
                     }
-                    callback(result);
+
+                    // For an insertion, we need to return the inserted user.
+                    database.getUserDestinationProfileByUserId(
+                        userId, destination,
+
+                        function (createdUserDestinationProfile) {
+                            callback(createdUserDestinationProfile);
+                        }
+                    );
                 }
             ];
 
@@ -149,7 +200,17 @@ module.exports = function (database) {
                 queryConfig[0] = "UPDATE " + database.USER_DESTINATION_TABLE + " " +
                         "SET destinationId = ?, profile = ? " +
                         "WHERE userId = ? AND destination = ?";
+
                 queryConfig[1] = [destinationId, profile, userId, destination];
+
+                queryConfig[2] = function (err, results, fields) {
+                    if (err) {
+                        console.log(err);
+                    }
+
+                    // A successful update should return no content.
+                    callback(null);
+                };
             }
 
             // Execute the query, whether it was an update or add.

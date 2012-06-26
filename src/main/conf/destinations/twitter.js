@@ -23,11 +23,11 @@ module.exports = function (everyauth, configurationResult) {
                     });
 
                 if (session.user) {
-                    database.getUserIdByName(session.user.name, function (userId) {
+                    database._getFullUserByName(session.user.name, function (user) {
                         database.createOrUpdateUserDestinationProfile(
-                            userId, DESTINATION, twitUser.id, profile,
+                            user.id, DESTINATION, twitUser.id, profile,
                             function () {
-                                console.log("[i] Media profile parsed for " + session.user.name);
+                                console.log("[i] User destination parsed for " + session.user.name);
                             }
                         );
                     });
