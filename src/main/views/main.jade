@@ -6,17 +6,19 @@ div.container
       span#character-count 0
     #posting-section
       textarea#status
-    div#filters
-      input(type="checkbox", value="filterYell")#yell-checkbox 
-      label(for="yell-checkbox") YELL IT!
-      input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
-      label(for="truncate-to-140-checkbox") Truncate to 140
-      input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
-      label(for="noctothorpe-checkbox") Noctothorpe
+    #filters.control-group
+      div.controls
+        label(for="yell-checkbox").checkbox.inline
+          input(type="checkbox", value="filterYell")#yell-checkbox 
+          |  YELL IT!
+        label(for="truncate-to-140-checkbox").checkbox.inline
+          input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
+          |  Truncate to 140
+        label(for="noctothorpe-checkbox").checkbox.inline
+          input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+          |  Noctothorpe
     a#post-this.btn.btn-primary.btn-large Post This
-    div#post-footer
-      span
+    #post-footer
         a(href="/profile").btn.btn-large See your profile
-      span
         a(href="/logout").btn.btn-large Logout
 script(src="../js/action/post-status.js")
