@@ -9,7 +9,7 @@ $(function () {
     $.getJSON(
         "/users/" + username,
         function (result) {
-            $("#user-name").val(result.accountName);
+            $("#user-name").val(result.name);
             $("#user-email").val(result.email);
         }
     );

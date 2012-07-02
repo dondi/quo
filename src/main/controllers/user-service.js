@@ -6,12 +6,19 @@
  */
 module.exports = function (app, database) {
 
-    // Imports
-    var sanitize = require('validator').sanitize,
+        // Imports.
+    var sanitize = require("validator").sanitize,
 
-        // Helper function to sanitize pre-DB layer user input
+        // Helper function to sanitize pre-DB layer user input.
         sanitizeAuthentication = function (userInput) {
-          return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+            return (userInput !== sanitize(userInput).xss() && userInput.indexOf("'") === -1);
+        },
+
+        // Helper function for shipping out a created user.
+        sendCreatedUser = function (res, createdUser) {
+            // TODO Is there a way to build a URI in Node/Express?
+            res.header("Location", "/users/" + createdUser.name);
+            res.send(201);
         };
 
     /*
@@ -19,8 +26,8 @@ module.exports = function (app, database) {
      *   Handles login credentials
      */
     // TODO This is *the* user authentication service, which means it belongs
-    //      here.  However, '/' is probably not the best URI for it.
-    app.post('/', function (req, res) {
+    //      here.  However, "/" is probably not the best URI for it.
+    app.post("/", function (req, res) {
         var inputs = req.body,
             user = inputs["user"],
             pass = inputs["pass"], // TODO: Should be hashed; can tackle later
@@ -35,8 +42,7 @@ module.exports = function (app, database) {
                 if (result) {
                     // The presence of the session.user property indicates that a user
                     // is currently logged in.
-                    session.user = user;
-                    session.accountId = result[0].accountId;
+                    session.user = result[0];
                 }
                 res.send(result);
             });
@@ -50,67 +56,92 @@ module.exports = function (app, database) {
      * system.  TODO Decide on the credentials, if any, that are necessary
      *               for viewing this list.
      */
-    app.get('/users', function (req, res) {
+    app.get("/users", function (req, res) {
         database.query(
-            'SELECT accountName FROM ' + database.ACCOUNTS_TABLE,
+            "SELECT name FROM " + database.USER_TABLE,
             function (err, results) {
                 // For every result, extract just the accountName into
                 // an array and return that array.
-                var accountNameArray = [],
+                var names = [],
                     i,
                     max = results.length;
 
                 for (i = 0; i < max; i += 1) {
-                    accountNameArray.push(results[i].accountName);
+                    names.push(results[i].name);
                 }
 
-                res.send(accountNameArray);
+                res.send(names);
             }
         );
     });
-  
+
+    /*
+     * POST /users
+     *
+     * Creates a new user from the given payload.
+     */
+    app.post("/users", function (req, res) {
+        var userToPost = req.body;
+
+        // Make sure that the user does not have an ID.
+        if (userToPost.id) {
+            res.send("User overspecified", 400);
+        } else {
+            // Perform the creation.
+            database.createOrUpdateUser(userToPost,
+                // Send back the created response code, along with the URI of the new user.
+                function (result) {
+                    // TODO Take care of potential errors (currently just logged).
+                    if (result) {
+                        sendCreatedUser(res, result);
+                    } else {
+                        res.send("Creation failed", 400);
+                    }
+                }
+            );
+        }
+    });
+
     /*
      * GET /users/:username
      *
      * This URI returns a JSON representation of the user with the given
      * username.
      */
-    app.get('/users/:username', function (req, res) {
-        database.query(
-            'SELECT accountId, accountName, email FROM ' + database.ACCOUNTS_TABLE +
-                ' WHERE accountName = ?',
-            [ req.params.username ],
-            function (err, results) {
-                if (results.length) {
-                    if (results.length === 1) {
-                        res.send(results[0]);
-                    } else {
-                        // This should never happen under normal circumstances, but if
-                        // it does, we want to know about it.
-                        res.send('More than one user found', 500);
-                    }
-                } else {
-                    res.send('User ' + req.params.username + ' not found', 404);
-                }
+    app.get("/users/:username", function (req, res) {
+        database.getUserByName(req.params.username,
+
+            function (result) {
+                res.send(result || 404);
             }
         );
     });
-  
+
     /*
      * PUT /users/:username
      *
      * This URI replaces the user information in the database with the
      * corresponding data from the request payload.
      */
-    app.put('/users/:username', function (req, res) {
-        database.query(
-            'UPDATE ' + database.ACCOUNTS_TABLE + ' SET email = ? WHERE accountName = ?',
-            [ req.body['email'], req.params.username ],
-            function (err, results) {
-                // TODO Take care of potential errors.
-                res.send(204);
-            }
-        );
+    app.put("/users/:username", function (req, res) {
+        var userToPut = req.body;
+
+        // First, check that the supplied information is consistent.
+        if (userToPut.name === req.params.username) {
+            database.createOrUpdateUser(userToPut,
+
+                function (result) {
+                    // TODO Take care of potential errors (currently just logged).
+                    if (result) {
+                        sendCreatedUser(res, result);
+                    } else {
+                        res.send(204);
+                    }
+                }
+            );
+        } else {
+            res.send("User inconsistent", 400);
+        }
     });
 
 };
