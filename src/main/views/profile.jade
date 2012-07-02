@@ -1,0 +1,14 @@
+#profile.panel.wrapper
+  h2 Edit your profile
+  div
+    label(for="user") Username :
+    input#user(type="text")
+  div
+    label(for="email") Your email address :
+    input#user-email(type="text")
+    #twitter-login
+    a(href='/auth/twitter', style='border: 0px')
+      img(style='border: 0px', src='https://si0.twimg.com/images/dev/buttons/sign-in-with-twitter-l.png')
+  button#save-profile Save changes
+  br
+script(src="../public/js/action/profile.js")

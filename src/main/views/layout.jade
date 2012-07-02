@@ -1,7 +1,12 @@
 !!! 5
-html
+html(lang='en')
   head
     title Quo
-    link(rel='stylesheet', type='text/css', href='/css/main.css')
+    link(rel='stylesheet', href='//current.bootstrapcdn.com/bootstrap-v204/css/bootstrap-combined.min.css')
+    style(type='text/css')
+      body {
+        padding-top: 60px;
+        padding-bottom: 40px;
+      }
     script(type='text/javascript', src='../js/lib/jquery-1.6.4.min.js')
   body!= body

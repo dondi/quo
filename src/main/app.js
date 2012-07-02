@@ -1,77 +1,94 @@
 /**
  * app.js
  *
- * Server configuration file that runs the web app
+ * Server configuration file that runs the web app.
  */
+var express = require("express"),
+    everyauth = require("everyauth"),
 
-var express = require('express'),
+    // "Scratch" object for holding configuration script results.
+    configurationResult,
 
-    app = module.exports = express.createServer(),
+    // To be initialized upon database configuration.
+    database,
 
-    mysql = require('mysql');
-    
-    client = mysql.createClient({
-      ACCOUNTS_TABLE : "quo_accounts",
-      host : "mysql.cs.lmu.edu",
-      database : "quo"
-    });
+    // To be initialized upon destination configuration.
+    destinations,
+
+    // Cumulative holder of error messages (just a plain string).
+    errors = "",
+
+    // To be initialized after configuration finishes.
+    app;
 
 /*
  *
- *  **** APPLICATION CONFIGURATION ****
+ *  **** CONFIGURATION ****
+ *
+ */
+ 
+// Set up the database client and data access objects.
+configurationResult = require("./conf/db-config.js")(require("mysql"));
+database = configurationResult.database;
+errors += (configurationResult.errors || "");
+
+// Set up the available destinations.
+configurationResult = require("./conf/destination-config.js")(everyauth);
+destinations = configurationResult.destinations;
+errors += (configurationResult.errors || "");
+
+// Report any configuration errors.
+console.error(errors || "\n[!] Configuration successful.");
+
+// Initialize the app.
+app = module.exports = express.createServer(
+    express.bodyParser(),
+    express.static(__dirname + "/public"),
+    express.cookieParser(),
+    express.methodOverride(),
+    express.session({
+        secret: "badonka donk"
+    }),
+    everyauth.middleware()
+);
+
+// Make everyauth data available to views.
+everyauth.helpExpress(app);
+
+// Set the available destinations.
+app.DESTINATIONS = destinations;
+
+/*
+ *
+ *  **** APPLICATION DEFINITION ****
  *
  */
 
 app.configure(function () {
-  app.set('views', __dirname + '/views');
-  app.set('view engine', 'jade');
-  app.set("view options", {
-    layout: false
-  });
-  app.register('.html', {
-    compile: function (str, options) {
-      return function (locals) {
-        return str;
-      };
-    }
-  });
-  app.use(express.bodyParser());
-  app.use(express.methodOverride());
-  app.use(express.cookieParser());
-  app.use(express.session({
-    secret: 'your secret here'
-  }));
-  // TODO I don't know much about sessions and what this secret is, but we need to pick one!
-  app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
+    app.set("views", __dirname + "/views");
+    app.set("view engine", "jade");
+    app.set("view options", {
+        layout: false
+    });
+    app.register(".html", {
+        compile: function (str, options) {
+            return function (locals) {
+                return str;
+            };
+        }
+    });
 });
 
-app.configure('development', function () {
-  app.use(express.errorHandler({
-    dumpExceptions: true,
-    showStack: true
-  }));
+app.configure("development", function () {
+    app.use(express.errorHandler({
+        dumpExceptions: true,
+        showStack: true
+    }));
 });
 
-app.configure('production', function () {
-  app.use(express.errorHandler());
+app.configure("production", function () {
+    app.use(express.errorHandler());
 });
-
-/*
- *
- *  **** DATABASE CONFIGURATION ****
- *
- */
-
-// Check that the proper credentials have been set, otherwise, do not mess with database stuff
-if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
-  client.user = process.env.QUO_DB_USER;
-  client.password = process.env.QUO_DB_PASS;
-  require('./public/js/modules/db-config.js')(client);
-} else {
-  console.error("Database user and/or password not found in environment.");
-  console.error("No database will be available to this process.");
-}
 
 /*
  *
@@ -79,14 +96,25 @@ if (process.env.QUO_DB_USER && process.env.QUO_DB_PASS) {
  *
  */
 
-require('./controllers/account-controller.js')(app, client);
-require('./controllers/pipeline-controller.js')(app);
+require("./controllers/user-service.js")(app, database);
+require("./controllers/pipeline-service.js")(app, database);
+require("./controllers/destination-service.js")(app, database);
+require("./controllers/function-service.js")(app, database);
+
+// status-service.js has to strictly appear after function-service.js because
+// it relies on objects that function-service.js defines.
+require("./controllers/status-service.js")(app, database);
+require("./controllers/webapp.js")(app, database);
 
 /*
  *
- *  **** START THE SERVER ****
+ *  **** SERVER START ****
  *
  */
 
 app.listen(4000);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+console.log(
+    "Express server listening on port %d in %s mode",
+    app.address().port,
+    app.settings.env
+);

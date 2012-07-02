@@ -1,3 +1,27 @@
-#main
-  h1 Main Screen
-  p Stuff goes here! Yay!
+div.container
+  #main.hero-unit
+    h1 QuotentialForGreatness
+    h3 Enter in your status below. Choose a modification if ya likes.
+    div Character Count: 
+      span#character-count 0
+    #posting-section
+      textarea#status
+    #filters.control-group
+      div.controls
+        label(for="yell-checkbox").checkbox.inline
+          input(type="checkbox", value="filterYell")#yell-checkbox 
+          |  YELL IT!
+        label(for="truncate-to-140-checkbox").checkbox.inline
+          input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
+          |  Truncate to 140
+        label(for="noctothorpe-checkbox").checkbox.inline
+          input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+          |  Noctothorpe
+    a#post-this.btn.btn-primary.btn-large Post This
+    #post-footer
+        a(href="/profile").btn.btn-large See your profile
+        a(href="/logout").btn.btn-large Logout
+    .twitter-id
+      .label Twitter
+      .value #{everyauth.twitter.user.screen_name}
+script(src="../js/action/post-status.js")

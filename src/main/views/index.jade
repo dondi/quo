@@ -1,15 +1,16 @@
-#login.loginFrame
-  h1 Welcome to Quo
-  h2 Login
-  - if (typeof(loginFlash) != 'undefined')
-    p#flashMessage.goodMessage= loginFlash
-  - if (typeof(loginBadFlash) != 'undefined')
-    p#flashMessage.badMessage= loginBadFlash
-  form(method="POST", action="/")
-    p Username
-    input(type="text", id="user", name="user")
-    p Password
-    input(type="password", id="pass", name="pass")
-    br
-    input(type="submit", id="login", class="topMargin", name="login", value="Login")
+div.container
+  #login.hero-unit
+    h1 Welcome To Quo
+    #login-inner-panel
+      h2 .login
+      div
+        label(for="username") username
+      div
+        input#username(type="text", name="username")
+      div
+        label(for="password") password
+      div
+        input#password(type="password", name="password")
+      a#login-button.btn.btn-primary.btn-large login
+      #login-err(style="display:none;") Username / Password combo not found!
 script(type="text/javascript", src="../js/display/login-display.js")
