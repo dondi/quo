@@ -27,7 +27,7 @@ $(function () {
             
             // Go through each filter checkbox
             $("#filters")
-                .children("input:checked")
+                .find("input:checked")
                 .each(function (index, element) {
                     filterConfig += $(this).val() + ",";
                 });
