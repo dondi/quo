@@ -1,27 +1,45 @@
-div.container
-  #main.hero-unit
-    h1 QuotentialForGreatness
-    h3 Enter in your status below. Choose a modification if ya likes.
-    div Character Count: 
-      span#character-count 0
-    #posting-section
-      textarea#status
-    #filters.control-group
-      div.controls
-        label(for="yell-checkbox").checkbox.inline
-          input(type="checkbox", value="filterYell")#yell-checkbox 
-          |  YELL IT!
-        label(for="truncate-to-140-checkbox").checkbox.inline
-          input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
-          |  Truncate to 140
-        label(for="noctothorpe-checkbox").checkbox.inline
-          input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
-          |  Noctothorpe
-    a#post-this.btn.btn-primary.btn-large Post This
-    #post-footer
-        a(href="/profile").btn.btn-large See your profile
-        a(href="/logout").btn.btn-large Logout
-    .twitter-id
-      .label Twitter
-      .value #{everyauth.twitter.user.screen_name}
+.navbar.navbar-fixed-top
+  .navbar-inner
+    .container
+      a(data-toggle="collapse", data-target=".nav-collapse").btn.btn-navbar
+        span.icon-bar
+        span.icon-bar
+        span.icon-bar        
+      a(href="/main").brand Quo
+      .nav-collapse
+        ul.nav
+          li
+            a(href="/profile") Profile
+          li
+            a(href="/logout") Logout
+.container-fluid
+  .row-fluid
+    #screennames.span3
+      h3 Your Social Networks:
+      #twitter-id.id
+        span.label Twitter
+        span.value #{everyauth.twitter.user.screen_name}
+      //-
+        #facebook-id.id
+          .label Facebook
+          .value #{everyauth.facebook.user.screen_name}
+    #main.span9
+      h1 QuotentialForGreatness
+      h4 Enter in your status below. Choose a modification if ya likes.
+      div Character Count: 
+        span#character-count 0
+      #posting-section
+        textarea#status
+      #filters.control-group
+        div.controls
+          label(for="yell-checkbox").checkbox.inline
+            input(type="checkbox", value="filterYell")#yell-checkbox 
+            |  YELL IT!
+          label(for="truncate-to-140-checkbox").checkbox.inline
+            input(type="checkbox", value="filterTruncate")#truncate-to-140-checkbox
+            |  Truncate to 140
+          label(for="noctothorpe-checkbox").checkbox.inline
+            input(type="checkbox",value="filterNoHash")#noctothorpe-checkbox
+            |  Noctothorpe
+      a#post-this.btn.btn-primary.btn-large Post This
 script(src="../js/action/post-status.js")

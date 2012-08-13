@@ -1,0 +1,7 @@
+body {
+/*    background-image: url('logo-lite.png'); */
+}
+
+.label+.value {
+    padding-left: 5px;
+}
