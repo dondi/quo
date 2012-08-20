@@ -5,12 +5,13 @@ $(function () {
     // Grab the requested username; this is the last element of the
     // page URL.
     var username = window.location.pathname.split("/").pop();
-
+    console.log(username);
+    /*
     $.getJSON(
         "/users/" + username,
         function (result) {
-            $("#user-name").val(result.name);
-            $("#user-email").val(result.email);
+            $("#name").val(result.name);
+            $("#email").val(result.email);
         }
     );
 
@@ -23,13 +24,36 @@ $(function () {
             {
                 type: "PUT",
                 data: {
-                    email: $("#user-email").val()
+                    email: $("#email").val()
                 },
                 success: function (result) {
-                    // TODO This can be much better  :)
-                    alert("Done!");
+                    // TODO How does one retrieve ReST status?
+                    console.log("profile updated");
                 }
             }
         );
     });
+    
+    // Set up the Create profile button to perform a PUT to the newly created
+    // user. TODO still have to figure out the POST part of user creation.
+    $("#create-profile").click(function () {
+        username = $("#username").val();
+        $.ajax(
+            "/users/" + username,
+            {
+                type: "PUT",
+                data: {
+                    email: $("#email").val()
+                    password: $("#password").val()
+                },
+                success: function (result) {
+                    // TODO This can be much better  :)
+                    console.logt("profile created");
+                }
+            }
+        );
+    });
+    */
+
+
 });
