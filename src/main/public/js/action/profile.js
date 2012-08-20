@@ -6,7 +6,7 @@ $(function () {
     // page URL.
     var username = window.location.pathname.split("/").pop();
     console.log(username);
-    /*
+
     $.getJSON(
         "/users/" + username,
         function (result) {
@@ -53,7 +53,7 @@ $(function () {
             }
         );
     });
-    */
+
 
 
 });
