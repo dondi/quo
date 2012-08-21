@@ -90,12 +90,14 @@ module.exports = function (app, database) {
             // Perform the creation.
             database.createOrUpdateUser(userToPost,
                 // Send back the created response code, along with the URI of the new user.
-                function (result) {
-                    // TODO Take care of potential errors (currently just logged).
-                    if (result) {
+                function (result, err) {
+                    // The presence of an error trumps the result.
+                    if (err) {
+                        res.send(500);
+                    } else if (result) {
                         sendCreatedUser(res, result);
                     } else {
-                        res.send("Creation failed", 400);
+                        res.send("Creation failed", 500);
                     }
                 }
             );
@@ -130,9 +132,11 @@ module.exports = function (app, database) {
         if (userToPut.name === req.params.username) {
             database.createOrUpdateUser(userToPut,
 
-                function (result) {
-                    // TODO Take care of potential errors (currently just logged).
-                    if (result) {
+                function (result, err) {
+                    // The presence of an error trumps the result.
+                    if (err) {
+                        res.send(500);
+                    } else if (result) {
                         sendCreatedUser(res, result);
                     } else {
                         res.send(204);

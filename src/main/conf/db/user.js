@@ -94,12 +94,13 @@ module.exports = function (database) {
                 function (err, results, fields) {
                     if (err) {
                         console.log(err);
+                        callback(null, err);
+                    } else {
+                        // For an insertion, we need to return the inserted user.
+                        database.getUserByName(user.name, function (createdUser) {
+                            callback(createdUser);
+                        });
                     }
-
-                    // For an insertion, we need to return the inserted user.
-                    database.getUserByName(user.name, function (createdUser) {
-                        callback(createdUser);
-                    });
                 }
             ];
 
@@ -115,10 +116,11 @@ module.exports = function (database) {
                 queryConfig[2] = function (err, results, fields) {
                     if (err) {
                         console.log(err);
+                        callback(null, err);
+                    } else {
+                        // A successful update should return no content.
+                        callback(null);
                     }
-
-                    // A successful update should return no content.
-                    callback(null);
                 };
             }
 
