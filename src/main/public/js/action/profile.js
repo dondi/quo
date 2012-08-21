@@ -13,6 +13,7 @@ $(function () {
             $("#name").val(result.name);
             $("#email").val(result.email);
         }
+        console.log("GOT");
     );
 
     // Set up the Save Profile button to perform a PUT to the referenced user.
@@ -25,13 +26,12 @@ $(function () {
                 type: "PUT",
                 data: {
                     email: $("#email").val()
-                },
-                success: function (result) {
-                    // TODO How does one retrieve ReST status?
-                    console.log("profile updated");
+                    password: $("#password").val()
                 }
             }
-        );
+        )
+        .success(function() {console.log("Success!")})
+        .error(function() {console.log("Failed")});
     });
     
     // Set up the Create profile button to perform a PUT to the newly created
@@ -45,13 +45,11 @@ $(function () {
                 data: {
                     email: $("#email").val()
                     password: $("#password").val()
-                },
-                success: function (result) {
-                    // TODO This can be much better  :)
-                    console.logt("profile created");
                 }
             }
-        );
+        )
+        .success(function() {console.log("Success!")})
+        .error(function() {console.log("Failed")});
     });
 
 
