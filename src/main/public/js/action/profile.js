@@ -10,10 +10,10 @@ $(function () {
     $.getJSON(
         "/users/" + username,
         function (result) {
-            $("#name").val(result.name);
+            $("#user").val(result.name);
             $("#email").val(result.email);
+            console.log("GOT");
         }
-        console.log("GOT");
     );
 
     // Set up the Save Profile button to perform a PUT to the referenced user.
@@ -21,11 +21,12 @@ $(function () {
     //      to create new users.
     $("#save-profile").click(function () {
         $.ajax(
-            "/users/" + username,
             {
+                url: "/users/" + username,
                 type: "PUT",
                 data: {
-                    email: $("#email").val()
+                    name: $("#user").val(),
+                    email: $("#email").val(),
                     password: $("#password").val()
                 }
             }
@@ -43,7 +44,7 @@ $(function () {
             {
                 type: "PUT",
                 data: {
-                    email: $("#email").val()
+                    email: $("#email").val(),
                     password: $("#password").val()
                 }
             }
