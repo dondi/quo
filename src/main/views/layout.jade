@@ -12,15 +12,10 @@ html(lang='en')
       }
     script(type='text/javascript', src='../js/lib/jquery-1.6.4.min.js')
   body!= body
-    .navbar.navbar-fixed-top
-      .navbar-inner
-        .container
-          a(data-toggle="collapse", data-target=".nav-collapse").btn.btn-navbar
-            span.icon-bar
-            span.icon-bar
-            span.icon-bar        
-          a(href="/main").brand Quo
-          .nav-collapse
+    .container
+      .navbar.navbar-fixed-top
+        .navbar-inner       
+            a(href="/main").brand Quo
             ul.nav
               li
                 a(href="/profile") Profile
